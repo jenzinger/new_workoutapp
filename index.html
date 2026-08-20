@@ -270,8 +270,8 @@
   <div id="timerView" class="view">
     <div class="diagram-container">
       <div class="anatomy-card">
-        <!-- 3D Rendered Image Graphic -->
-        <img id="exerciseArt" src="" alt="3D Exercise Render">
+        <!-- Self-Contained Vector Render -->
+        <img id="exerciseArt" src="" alt="Exercise Anatomy Render">
       </div>
 
       <div id="phaseBadge" class="phase-badge phase-work">Ready</div>
@@ -329,10 +329,10 @@
         </select>
 
         <select id="newExArt">
-          <option value="biceps">3D Bicep Render</option>
-          <option value="triceps">3D Tricep Render</option>
-          <option value="chest">3D Chest Render</option>
-          <option value="back">3D Back Render</option>
+          <option value="biceps">Bicep Muscle Map</option>
+          <option value="triceps">Triceps Muscle Map</option>
+          <option value="chest">Chest Muscle Map</option>
+          <option value="back">Back Muscle Map</option>
         </select>
 
         <button class="btn btn-add" onclick="addExercise()">Add to Routine</button>
@@ -345,23 +345,23 @@
   </div>
 
   <script>
-    /* OPTION 1: HIGH-DEFINITION 3D RENDERED WEB ASSETS (Open-Access CDNs) */
+    /* PERMANENT OFFLINE EMBEDDED GRAPHICS (Zero Network Dependencies - ~15KB total) */
     var renderAssets = {
       biceps: {
-        start: 'https://raw.githubusercontent.com/wger-project/wger/master/wger/core/static/images/muscles/main/muscle-1.svg',
-        end: 'https://upload.wikimedia.org/wikipedia/commons/8/8c/Biceps_brachii.png'
+        start: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none"><rect width="200" height="200" rx="20" fill="%23121212"/><rect x="80" y="160" width="40" height="6" rx="3" fill="%232c2c2e"/><circle cx="100" cy="45" r="16" fill="%233a3a3c"/><path d="M84 62 C76 70 76 95 80 135 L120 135 C124 95 124 70 116 62 Z" fill="%233a3a3c"/><path d="M76 66 C66 78 62 102 66 130 L54 130 C48 102 56 74 68 62 Z" fill="%232c2c2e"/><path d="M124 66 C134 78 138 102 134 130 L146 130 C152 102 144 74 132 62 Z" fill="%232c2c2e"/><path d="M68 82 C64 90 64 106 70 114 C74 106 74 90 68 82 Z" fill="%2330d158"/><path d="M132 82 C136 90 136 106 130 114 C126 106 126 90 132 82 Z" fill="%2330d158"/><rect x="46" y="126" width="16" height="28" rx="5" fill="%238e8e93"/><rect x="138" y="126" width="16" height="28" rx="5" fill="%238e8e93"/></svg>',
+        end: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none"><rect width="200" height="200" rx="20" fill="%23121212"/><rect x="80" y="160" width="40" height="6" rx="3" fill="%232c2c2e"/><circle cx="100" cy="45" r="16" fill="%233a3a3c"/><path d="M84 62 C76 70 76 95 80 135 L120 135 C124 95 124 70 116 62 Z" fill="%233a3a3c"/><path d="M76 66 C64 74 56 82 52 94 L62 102 C70 86 76 78 80 74 Z" fill="%232c2c2e"/><path d="M124 66 C136 74 144 82 148 94 L138 102 C130 86 124 78 120 74 Z" fill="%232c2c2e"/><path d="M70 74 C62 80 60 90 68 96 C74 88 74 78 70 74 Z" fill="%2330d158"/><path d="M130 74 C138 80 140 90 132 96 C126 88 126 78 130 74 Z" fill="%2330d158"/><rect x="44" y="86" width="20" height="20" rx="6" fill="%238e8e93"/><rect x="136" y="86" width="20" height="20" rx="6" fill="%238e8e93"/></svg>'
       },
       triceps: {
-        start: 'https://raw.githubusercontent.com/wger-project/wger/master/wger/core/static/images/muscles/main/muscle-5.svg',
-        end: 'https://upload.wikimedia.org/wikipedia/commons/c/c2/Triceps_brachii.png'
+        start: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none"><rect width="200" height="200" rx="20" fill="%23121212"/><circle cx="100" cy="80" r="16" fill="%233a3a3c"/><path d="M84 100 L80 170 L120 170 L116 100 Z" fill="%233a3a3c"/><path d="M84 100 C80 72 84 52 86 36 L98 36 C94 52 92 72 90 100 Z" fill="%232c2c2e"/><path d="M116 100 C120 72 116 52 114 36 L102 36 C106 52 108 72 110 100 Z" fill="%232c2c2e"/><path d="M82 52 C76 64 78 80 86 92 C86 76 86 60 82 52 Z" fill="%2330d158"/><path d="M118 52 C124 64 122 80 114 92 C114 76 114 60 118 52 Z" fill="%2330d158"/><rect x="64" y="60" width="24" height="16" rx="4" fill="%238e8e93"/><rect x="112" y="60" width="24" height="16" rx="4" fill="%238e8e93"/></svg>',
+        end: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none"><rect width="200" height="200" rx="20" fill="%23121212"/><circle cx="100" cy="80" r="16" fill="%233a3a3c"/><path d="M84 100 L80 170 L120 170 L116 100 Z" fill="%233a3a3c"/><path d="M84 100 C80 72 84 48 88 20 L98 20 C94 48 92 72 90 100 Z" fill="%232c2c2e"/><path d="M116 100 C120 72 116 48 112 20 L102 20 C106 48 108 72 110 100 Z" fill="%232c2c2e"/><path d="M82 48 C78 62 80 80 88 92 C86 76 86 60 82 48 Z" fill="%2330d158"/><path d="M118 48 C122 62 120 80 112 92 C114 76 114 60 118 48 Z" fill="%2330d158"/><rect x="84" y="10" width="32" height="16" rx="4" fill="%238e8e93"/></svg>'
       },
       chest: {
-        start: 'https://raw.githubusercontent.com/wger-project/wger/master/wger/core/static/images/muscles/main/muscle-4.svg',
-        end: 'https://upload.wikimedia.org/wikipedia/commons/6/6c/Pectoralis_major.png'
+        start: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none"><rect width="200" height="200" rx="20" fill="%23121212"/><rect x="30" y="120" width="140" height="12" rx="6" fill="%232c2c2e"/><rect x="50" y="132" width="12" height="36" fill="%232c2c2e"/><rect x="138" y="132" width="12" height="36" fill="%232c2c2e"/><circle cx="56" cy="108" r="16" fill="%233a3a3c"/><path d="M72 104 L150 104 L140 120 L72 120 Z" fill="%233a3a3c"/><path d="M88 104 C88 88 96 80 80 76 L68 92 Z" fill="%232c2c2e"/><path d="M112 104 C112 88 104 80 120 76 L132 92 Z" fill="%232c2c2e"/><path d="M84 104 C92 96 100 96 100 104 Z" fill="%2330d158"/><path d="M116 104 C108 96 100 96 100 104 Z" fill="%2330d158"/><rect x="56" y="68" width="24" height="14" rx="4" fill="%238e8e93"/><rect x="120" y="68" width="24" height="14" rx="4" fill="%238e8e93"/></svg>',
+        end: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none"><rect width="200" height="200" rx="20" fill="%23121212"/><rect x="30" y="120" width="140" height="12" rx="6" fill="%232c2c2e"/><rect x="50" y="132" width="12" height="36" fill="%232c2c2e"/><rect x="138" y="132" width="12" height="36" fill="%232c2c2e"/><circle cx="56" cy="108" r="16" fill="%233a3a3c"/><path d="M72 104 L150 104 L140 120 L72 120 Z" fill="%233a3a3c"/><path d="M88 104 C88 80 92 60 88 40 L96 40 C100 60 96 80 92 104 Z" fill="%232c2c2e"/><path d="M112 104 C112 80 108 60 112 40 L104 40 C100 60 104 80 108 104 Z" fill="%232c2c2e"/><path d="M84 104 C92 92 100 92 100 104 Z" fill="%2330d158"/><path d="M116 104 C108 92 100 92 100 104 Z" fill="%2330d158"/><rect x="80" y="28" width="40" height="16" rx="4" fill="%238e8e93"/></svg>'
       },
       back: {
-        start: 'https://raw.githubusercontent.com/wger-project/wger/master/wger/core/static/images/muscles/main/muscle-12.svg',
-        end: 'https://upload.wikimedia.org/wikipedia/commons/4/4d/Latissimus_dorsi.png'
+        start: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none"><rect width="200" height="200" rx="20" fill="%23121212"/><rect x="40" y="140" width="120" height="10" rx="4" fill="%232c2c2e"/><rect x="60" y="150" width="10" height="30" fill="%232c2c2e"/><circle cx="144" cy="72" r="16" fill="%233a3a3c"/><path d="M132 80 L80 100 L64 140 L84 140 L96 112 L128 92 Z" fill="%233a3a3c"/><path d="M112 88 C100 96 92 112 88 140 L100 140 C104 116 112 104 120 92 Z" fill="%232c2c2e"/><path d="M108 88 C96 92 84 92 96 104 Z" fill="%2330d158"/><rect x="76" y="132" width="24" height="16" rx="4" fill="%238e8e93"/></svg>',
+        end: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none"><rect width="200" height="200" rx="20" fill="%23121212"/><rect x="40" y="140" width="120" height="10" rx="4" fill="%232c2c2e"/><rect x="60" y="150" width="10" height="30" fill="%232c2c2e"/><circle cx="144" cy="72" r="16" fill="%233a3a3c"/><path d="M132 80 L80 100 L64 140 L84 140 L96 112 L128 92 Z" fill="%233a3a3c"/><path d="M112 88 C104 84 96 76 92 68 L104 68 C108 76 112 80 116 84 Z" fill="%232c2c2e"/><path d="M108 88 C96 92 84 88 96 80 Z" fill="%2330d158"/><rect x="84" y="60" width="24" height="16" rx="4" fill="%238e8e93"/></svg>'
       }
     };
 
@@ -384,7 +384,7 @@
 
     var exercises = defaultExercises;
     try {
-      var saved = localStorage.getItem('ios_dumbbell_timer_opt1');
+      var saved = localStorage.getItem('ios_dumbbell_timer_offline');
       if (saved) exercises = JSON.parse(saved);
     } catch (e) {
       exercises = defaultExercises;
@@ -441,7 +441,7 @@
 
     function saveExercises() {
       try {
-        localStorage.setItem('ios_dumbbell_timer_opt1', JSON.stringify(exercises));
+        localStorage.setItem('ios_dumbbell_timer_offline', JSON.stringify(exercises));
       } catch (e) {}
       renderManagerList();
       if (!isRunning) resetWorkout();
