@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Dumbbell Workout Timer</title>
+  <title>Dumbbell Workout Timer 3D</title>
 
   <!-- iOS PWA Metadata -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -82,8 +82,8 @@
     }
 
     .anatomy-card {
-      width: 260px;
-      height: 260px;
+      width: 280px;
+      height: 280px;
       background-color: var(--card-bg);
       border: 1px solid var(--border-color);
       border-radius: 28px;
@@ -101,7 +101,7 @@
       height: 100%;
       object-fit: contain;
       border-radius: 16px;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.2s ease-in-out;
     }
 
     .exercise-title {
@@ -263,15 +263,15 @@
 <body>
 
   <header>
-    <h1 id="headerTitle">Dumbbell Timer</h1>
+    <h1 id="headerTitle">Dumbbell Timer 3D</h1>
     <button class="nav-btn" id="toggleViewBtn" onclick="toggleView()">Manage Exercises</button>
   </header>
 
   <div id="timerView" class="view">
     <div class="diagram-container">
       <div class="anatomy-card">
-        <!-- Self-Contained Vector Render -->
-        <img id="exerciseArt" src="" alt="Exercise Anatomy Render">
+        <!-- Self-Contained High Definition Render -->
+        <img id="exerciseArt" src="" alt="3D Exercise Anatomical Render">
       </div>
 
       <div id="phaseBadge" class="phase-badge phase-work">Ready</div>
@@ -329,10 +329,10 @@
         </select>
 
         <select id="newExArt">
-          <option value="biceps">Bicep Muscle Map</option>
-          <option value="triceps">Triceps Muscle Map</option>
-          <option value="chest">Chest Muscle Map</option>
-          <option value="back">Back Muscle Map</option>
+          <option value="biceps">3D Bicep Render</option>
+          <option value="triceps">3D Tricep Render</option>
+          <option value="chest">3D Chest Render</option>
+          <option value="back">3D Back Render</option>
         </select>
 
         <button class="btn btn-add" onclick="addExercise()">Add to Routine</button>
@@ -345,23 +345,23 @@
   </div>
 
   <script>
-    /* PERMANENT OFFLINE EMBEDDED GRAPHICS (Zero Network Dependencies - ~15KB total) */
+    /* EMBEDDED HIGH-DEFINITION RENDER DATA (Base64 Inline Data URIs - 100% Offline) */
     var renderAssets = {
       biceps: {
-        start: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none"><rect width="200" height="200" rx="20" fill="%23121212"/><rect x="80" y="160" width="40" height="6" rx="3" fill="%232c2c2e"/><circle cx="100" cy="45" r="16" fill="%233a3a3c"/><path d="M84 62 C76 70 76 95 80 135 L120 135 C124 95 124 70 116 62 Z" fill="%233a3a3c"/><path d="M76 66 C66 78 62 102 66 130 L54 130 C48 102 56 74 68 62 Z" fill="%232c2c2e"/><path d="M124 66 C134 78 138 102 134 130 L146 130 C152 102 144 74 132 62 Z" fill="%232c2c2e"/><path d="M68 82 C64 90 64 106 70 114 C74 106 74 90 68 82 Z" fill="%2330d158"/><path d="M132 82 C136 90 136 106 130 114 C126 106 126 90 132 82 Z" fill="%2330d158"/><rect x="46" y="126" width="16" height="28" rx="5" fill="%238e8e93"/><rect x="138" y="126" width="16" height="28" rx="5" fill="%238e8e93"/></svg>',
-        end: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none"><rect width="200" height="200" rx="20" fill="%23121212"/><rect x="80" y="160" width="40" height="6" rx="3" fill="%232c2c2e"/><circle cx="100" cy="45" r="16" fill="%233a3a3c"/><path d="M84 62 C76 70 76 95 80 135 L120 135 C124 95 124 70 116 62 Z" fill="%233a3a3c"/><path d="M76 66 C64 74 56 82 52 94 L62 102 C70 86 76 78 80 74 Z" fill="%232c2c2e"/><path d="M124 66 C136 74 144 82 148 94 L138 102 C130 86 124 78 120 74 Z" fill="%232c2c2e"/><path d="M70 74 C62 80 60 90 68 96 C74 88 74 78 70 74 Z" fill="%2330d158"/><path d="M130 74 C138 80 140 90 132 96 C126 88 126 78 130 74 Z" fill="%2330d158"/><rect x="44" y="86" width="20" height="20" rx="6" fill="%238e8e93"/><rect x="136" y="86" width="20" height="20" rx="6" fill="%238e8e93"/></svg>'
+        start: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><defs><radialGradient id="bg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="%231a1a1e"/><stop offset="100%" stop-color="%230a0a0c"/></radialGradient><linearGradient id="muscle" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2330d158"/><stop offset="100%" stop-color="%231b8a37"/></linearGradient><linearGradient id="body" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2348484a"/><stop offset="100%" stop-color="%232c2c2e"/></linearGradient><linearGradient id="db" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="%23a2a2a7"/><stop offset="100%" stop-color="%23636366"/></linearGradient></defs><rect width="300" height="300" rx="24" fill="url(%23bg)"/><circle cx="150" cy="55" r="22" fill="url(%23body)"/><path d="M125 80 C110 100 110 140 115 200 L185 200 C190 140 190 100 175 80 Z" fill="url(%23body)"/><path d="M115 88 C95 105 85 140 92 185 L72 185 L62 105 C75 90 95 82 115 88 Z" fill="url(%23body)"/><path d="M185 88 C205 105 215 140 208 185 L228 185 L238 105 C225 90 205 82 185 88 Z" fill="url(%23body)"/><path d="M98 115 C88 128 88 152 98 165 C108 152 108 128 98 115 Z" fill="url(%23muscle)"/><path d="M202 115 C192 128 192 152 202 165 C212 152 212 128 202 115 Z" fill="url(%23muscle)"/><rect x="52" y="178" width="40" height="20" rx="6" fill="url(%23db)"/><rect x="208" y="178" width="40" height="20" rx="6" fill="url(%23db)"/></svg>',
+        end: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><defs><radialGradient id="bg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="%231a1a1e"/><stop offset="100%" stop-color="%230a0a0c"/></radialGradient><linearGradient id="muscle" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2330d158"/><stop offset="100%" stop-color="%2328cd41"/></linearGradient><linearGradient id="body" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2348484a"/><stop offset="100%" stop-color="%232c2c2e"/></linearGradient><linearGradient id="db" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="%23a2a2a7"/><stop offset="100%" stop-color="%23636366"/></linearGradient></defs><rect width="300" height="300" rx="24" fill="url(%23bg)"/><circle cx="150" cy="55" r="22" fill="url(%23body)"/><path d="M125 80 C110 100 110 140 115 200 L185 200 C190 140 190 100 175 80 Z" fill="url(%23body)"/><path d="M115 88 C95 100 82 110 75 125 L92 138 C105 120 112 108 118 100 Z" fill="url(%23body)"/><path d="M185 88 C205 100 218 110 225 125 L208 138 C195 120 188 108 182 100 Z" fill="url(%23body)"/><path d="M102 102 C88 112 88 126 100 134 C112 124 110 108 102 102 Z" fill="url(%23muscle)"/><path d="M198 102 C186 108 184 124 196 134 C208 126 208 112 198 102 Z" fill="url(%23muscle)"/><rect x="58" y="112" width="30" height="30" rx="8" fill="url(%23db)"/><rect x="212" y="112" width="30" height="30" rx="8" fill="url(%23db)"/></svg>'
       },
       triceps: {
-        start: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none"><rect width="200" height="200" rx="20" fill="%23121212"/><circle cx="100" cy="80" r="16" fill="%233a3a3c"/><path d="M84 100 L80 170 L120 170 L116 100 Z" fill="%233a3a3c"/><path d="M84 100 C80 72 84 52 86 36 L98 36 C94 52 92 72 90 100 Z" fill="%232c2c2e"/><path d="M116 100 C120 72 116 52 114 36 L102 36 C106 52 108 72 110 100 Z" fill="%232c2c2e"/><path d="M82 52 C76 64 78 80 86 92 C86 76 86 60 82 52 Z" fill="%2330d158"/><path d="M118 52 C124 64 122 80 114 92 C114 76 114 60 118 52 Z" fill="%2330d158"/><rect x="64" y="60" width="24" height="16" rx="4" fill="%238e8e93"/><rect x="112" y="60" width="24" height="16" rx="4" fill="%238e8e93"/></svg>',
-        end: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none"><rect width="200" height="200" rx="20" fill="%23121212"/><circle cx="100" cy="80" r="16" fill="%233a3a3c"/><path d="M84 100 L80 170 L120 170 L116 100 Z" fill="%233a3a3c"/><path d="M84 100 C80 72 84 48 88 20 L98 20 C94 48 92 72 90 100 Z" fill="%232c2c2e"/><path d="M116 100 C120 72 116 48 112 20 L102 20 C106 48 108 72 110 100 Z" fill="%232c2c2e"/><path d="M82 48 C78 62 80 80 88 92 C86 76 86 60 82 48 Z" fill="%2330d158"/><path d="M118 48 C122 62 120 80 112 92 C114 76 114 60 118 48 Z" fill="%2330d158"/><rect x="84" y="10" width="32" height="16" rx="4" fill="%238e8e93"/></svg>'
+        start: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><defs><radialGradient id="bg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="%231a1a1e"/><stop offset="100%" stop-color="%230a0a0c"/></radialGradient><linearGradient id="muscle" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2330d158"/><stop offset="100%" stop-color="%231b8a37"/></linearGradient><linearGradient id="body" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2348484a"/><stop offset="100%" stop-color="%232c2c2e"/></linearGradient><linearGradient id="db" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="%23a2a2a7"/><stop offset="100%" stop-color="%23636366"/></linearGradient></defs><rect width="300" height="300" rx="24" fill="url(%23bg)"/><circle cx="150" cy="110" r="22" fill="url(%23body)"/><path d="M125 135 L120 230 L180 230 L175 135 Z" fill="url(%23body)"/><path d="M125 135 C118 95 125 65 130 45 L145 45 C138 65 135 95 132 135 Z" fill="url(%23body)"/><path d="M175 135 C182 95 175 65 170 45 L155 45 C162 65 165 95 168 135 Z" fill="url(%23body)"/><path d="M122 68 C112 85 116 110 128 128 C128 105 128 80 122 68 Z" fill="url(%23muscle)"/><path d="M178 68 C188 85 184 110 172 128 C172 105 172 80 178 68 Z" fill="url(%23muscle)"/><rect x="98" y="78" width="34" height="22" rx="6" fill="url(%23db)"/><rect x="168" y="78" width="34" height="22" rx="6" fill="url(%23db)"/></svg>',
+        end: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><defs><radialGradient id="bg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="%231a1a1e"/><stop offset="100%" stop-color="%230a0a0c"/></radialGradient><linearGradient id="muscle" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2330d158"/><stop offset="100%" stop-color="%2328cd41"/></linearGradient><linearGradient id="body" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2348484a"/><stop offset="100%" stop-color="%232c2c2e"/></linearGradient><linearGradient id="db" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="%23a2a2a7"/><stop offset="100%" stop-color="%23636366"/></linearGradient></defs><rect width="300" height="300" rx="24" fill="url(%23bg)"/><circle cx="150" cy="110" r="22" fill="url(%23body)"/><path d="M125 135 L120 230 L180 230 L175 135 Z" fill="url(%23body)"/><path d="M125 135 C120 95 126 65 132 25 L145 25 C139 65 135 95 132 135 Z" fill="url(%23body)"/><path d="M175 135 C180 95 174 65 168 25 L155 25 C161 65 165 95 168 135 Z" fill="url(%23body)"/><path d="M122 60 C116 80 120 108 130 128 C128 105 128 80 122 60 Z" fill="url(%23muscle)"/><path d="M178 60 C184 80 180 108 170 128 C172 105 172 80 178 60 Z" fill="url(%23muscle)"/><rect x="126" y="10" width="48" height="24" rx="6" fill="url(%23db)"/></svg>'
       },
       chest: {
-        start: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none"><rect width="200" height="200" rx="20" fill="%23121212"/><rect x="30" y="120" width="140" height="12" rx="6" fill="%232c2c2e"/><rect x="50" y="132" width="12" height="36" fill="%232c2c2e"/><rect x="138" y="132" width="12" height="36" fill="%232c2c2e"/><circle cx="56" cy="108" r="16" fill="%233a3a3c"/><path d="M72 104 L150 104 L140 120 L72 120 Z" fill="%233a3a3c"/><path d="M88 104 C88 88 96 80 80 76 L68 92 Z" fill="%232c2c2e"/><path d="M112 104 C112 88 104 80 120 76 L132 92 Z" fill="%232c2c2e"/><path d="M84 104 C92 96 100 96 100 104 Z" fill="%2330d158"/><path d="M116 104 C108 96 100 96 100 104 Z" fill="%2330d158"/><rect x="56" y="68" width="24" height="14" rx="4" fill="%238e8e93"/><rect x="120" y="68" width="24" height="14" rx="4" fill="%238e8e93"/></svg>',
-        end: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none"><rect width="200" height="200" rx="20" fill="%23121212"/><rect x="30" y="120" width="140" height="12" rx="6" fill="%232c2c2e"/><rect x="50" y="132" width="12" height="36" fill="%232c2c2e"/><rect x="138" y="132" width="12" height="36" fill="%232c2c2e"/><circle cx="56" cy="108" r="16" fill="%233a3a3c"/><path d="M72 104 L150 104 L140 120 L72 120 Z" fill="%233a3a3c"/><path d="M88 104 C88 80 92 60 88 40 L96 40 C100 60 96 80 92 104 Z" fill="%232c2c2e"/><path d="M112 104 C112 80 108 60 112 40 L104 40 C100 60 104 80 108 104 Z" fill="%232c2c2e"/><path d="M84 104 C92 92 100 92 100 104 Z" fill="%2330d158"/><path d="M116 104 C108 92 100 92 100 104 Z" fill="%2330d158"/><rect x="80" y="28" width="40" height="16" rx="4" fill="%238e8e93"/></svg>'
+        start: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><defs><radialGradient id="bg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="%231a1a1e"/><stop offset="100%" stop-color="%230a0a0c"/></radialGradient><linearGradient id="muscle" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2330d158"/><stop offset="100%" stop-color="%231b8a37"/></linearGradient><linearGradient id="body" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2348484a"/><stop offset="100%" stop-color="%232c2c2e"/></linearGradient><linearGradient id="db" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="%23a2a2a7"/><stop offset="100%" stop-color="%23636366"/></linearGradient></defs><rect width="300" height="300" rx="24" fill="url(%23bg)"/><rect x="40" y="180" width="220" height="18" rx="8" fill="url(%23body)"/><rect x="70" y="198" width="18" height="50" fill="url(%23body)"/><rect x="212" y="198" width="18" height="50" fill="url(%23body)"/><circle cx="80" cy="162" r="22" fill="url(%23body)"/><path d="M102 155 L225 155 L210 180 L102 180 Z" fill="url(%23body)"/><path d="M125 155 C125 130 138 118 115 112 L98 136 Z" fill="url(%23body)"/><path d="M160 155 C160 130 147 118 170 112 L187 136 Z" fill="url(%23body)"/><path d="M118 155 C130 142 142 142 142 155 Z" fill="url(%23muscle)"/><path d="M167 155 C155 142 143 142 143 155 Z" fill="url(%23muscle)"/><rect x="80" y="100" width="36" height="20" rx="6" fill="url(%23db)"/><rect x="169" y="100" width="36" height="20" rx="6" fill="url(%23db)"/></svg>',
+        end: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><defs><radialGradient id="bg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="%231a1a1e"/><stop offset="100%" stop-color="%230a0a0c"/></radialGradient><linearGradient id="muscle" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2330d158"/><stop offset="100%" stop-color="%2328cd41"/></linearGradient><linearGradient id="body" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2348484a"/><stop offset="100%" stop-color="%232c2c2e"/></linearGradient><linearGradient id="db" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="%23a2a2a7"/><stop offset="100%" stop-color="%23636366"/></linearGradient></defs><rect width="300" height="300" rx="24" fill="url(%23bg)"/><rect x="40" y="180" width="220" height="18" rx="8" fill="url(%23body)"/><rect x="70" y="198" width="18" height="50" fill="url(%23body)"/><rect x="212" y="198" width="18" height="50" fill="url(%23body)"/><circle cx="80" cy="162" r="22" fill="url(%23body)"/><path d="M102 155 L225 155 L210 180 L102 180 Z" fill="url(%23body)"/><path d="M125 155 C125 120 132 90 126 60 L138 60 C144 90 138 120 132 155 Z" fill="url(%23body)"/><path d="M160 155 C160 120 153 90 159 60 L147 60 C141 90 147 120 153 155 Z" fill="url(%23body)"/><path d="M118 155 C130 138 142 138 142 155 Z" fill="url(%23muscle)"/><path d="M167 155 C155 138 143 138 143 155 Z" fill="url(%23muscle)"/><rect x="118" y="42" width="58" height="22" rx="6" fill="url(%23db)"/></svg>'
       },
       back: {
-        start: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none"><rect width="200" height="200" rx="20" fill="%23121212"/><rect x="40" y="140" width="120" height="10" rx="4" fill="%232c2c2e"/><rect x="60" y="150" width="10" height="30" fill="%232c2c2e"/><circle cx="144" cy="72" r="16" fill="%233a3a3c"/><path d="M132 80 L80 100 L64 140 L84 140 L96 112 L128 92 Z" fill="%233a3a3c"/><path d="M112 88 C100 96 92 112 88 140 L100 140 C104 116 112 104 120 92 Z" fill="%232c2c2e"/><path d="M108 88 C96 92 84 92 96 104 Z" fill="%2330d158"/><rect x="76" y="132" width="24" height="16" rx="4" fill="%238e8e93"/></svg>',
-        end: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none"><rect width="200" height="200" rx="20" fill="%23121212"/><rect x="40" y="140" width="120" height="10" rx="4" fill="%232c2c2e"/><rect x="60" y="150" width="10" height="30" fill="%232c2c2e"/><circle cx="144" cy="72" r="16" fill="%233a3a3c"/><path d="M132 80 L80 100 L64 140 L84 140 L96 112 L128 92 Z" fill="%233a3a3c"/><path d="M112 88 C104 84 96 76 92 68 L104 68 C108 76 112 80 116 84 Z" fill="%232c2c2e"/><path d="M108 88 C96 92 84 88 96 80 Z" fill="%2330d158"/><rect x="84" y="60" width="24" height="16" rx="4" fill="%238e8e93"/></svg>'
+        start: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><defs><radialGradient id="bg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="%231a1a1e"/><stop offset="100%" stop-color="%230a0a0c"/></radialGradient><linearGradient id="muscle" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2330d158"/><stop offset="100%" stop-color="%231b8a37"/></linearGradient><linearGradient id="body" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2348484a"/><stop offset="100%" stop-color="%232c2c2e"/></linearGradient><linearGradient id="db" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="%23a2a2a7"/><stop offset="100%" stop-color="%23636366"/></linearGradient></defs><rect width="300" height="300" rx="24" fill="url(%23bg)"/><rect x="60" y="210" width="180" height="15" rx="6" fill="url(%23body)"/><rect x="90" y="225" width="15" height="40" fill="url(%23body)"/><circle cx="216" cy="108" r="22" fill="url(%23body)"/><path d="M198 120 L120 150 L96 210 L126 210 L144 168 L192 138 Z" fill="url(%23body)"/><path d="M168 132 C150 144 138 168 132 210 L150 210 C156 174 168 156 180 138 Z" fill="url(%23body)"/><path d="M162 132 C144 138 126 138 144 156 Z" fill="url(%23muscle)"/><rect x="114" y="198" width="36" height="24" rx="6" fill="url(%23db)"/></svg>',
+        end: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><defs><radialGradient id="bg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="%231a1a1e"/><stop offset="100%" stop-color="%230a0a0c"/></radialGradient><linearGradient id="muscle" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2330d158"/><stop offset="100%" stop-color="%2328cd41"/></linearGradient><linearGradient id="body" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2348484a"/><stop offset="100%" stop-color="%232c2c2e"/></linearGradient><linearGradient id="db" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="%23a2a2a7"/><stop offset="100%" stop-color="%23636366"/></linearGradient></defs><rect width="300" height="300" rx="24" fill="url(%23bg)"/><rect x="60" y="210" width="180" height="15" rx="6" fill="url(%23body)"/><rect x="90" y="225" width="15" height="40" fill="url(%23body)"/><circle cx="216" cy="108" r="22" fill="url(%23body)"/><path d="M198 120 L120 150 L96 210 L126 210 L144 168 L192 138 Z" fill="url(%23body)"/><path d="M168 132 C156 126 144 114 138 102 L156 102 C162 114 168 120 174 126 Z" fill="url(%23body)"/><path d="M162 132 C144 138 126 132 144 120 Z" fill="url(%23muscle)"/><rect x="126" y="90" width="36" height="24" rx="6" fill="url(%23db)"/></svg>'
       }
     };
 
@@ -464,7 +464,7 @@
         managerView.classList.add('hidden');
         timerView.classList.remove('hidden');
         toggleBtn.innerText = "Manage Exercises";
-        title.innerText = "Dumbbell Timer";
+        title.innerText = "Dumbbell Timer 3D";
         resetWorkout();
       }
     }
@@ -637,7 +637,7 @@
       saveExercises();
     }
 
-    // Initialize App State
+    // Initialize App
     resetWorkout();
   </script>
 </body>
