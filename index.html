@@ -96,60 +96,69 @@
       overflow: hidden;
     }
 
-    /* Anatomical Model Vectors */
-    .figure-container {
-      width: 140px;
-      height: 200px;
-      transform-origin: center center;
+    /* Vector Frames Switcher */
+    .figure-frame {
+      display: none;
+      width: 160px;
+      height: 180px;
+      align-items: center;
+      justify-content: center;
     }
 
-    .skeleton-base { fill: #2c2c2e; stroke: #48484a; stroke-width: 1; }
-    .muscle { fill: var(--muscle-base); transition: fill 0.3s ease, filter 0.3s ease; }
+    .figure-frame.active {
+      display: flex;
+    }
+
+    .skeleton-base { fill: #2c2c2e; stroke: #48484a; stroke-width: 1.5; }
+    .muscle { fill: var(--muscle-base); transition: fill 0.3s ease; }
     .muscle.active {
       fill: var(--muscle-active);
-      filter: drop-shadow(0 0 8px var(--muscle-glow));
+      filter: drop-shadow(0 0 6px var(--muscle-glow));
     }
 
-    /* Movement Keyframe Animations */
-    .anim-jumping-jacks {
-      animation: jack-move 0.8s infinite alternate ease-in-out;
+    /* Motion Animations */
+    .anim-jacks #jack-arm-l {
+      animation: jack-arm-left 0.7s infinite alternate ease-in-out;
+      transform-origin: 32px 32px;
     }
-    @keyframes jack-move {
-      0% { transform: translateY(0) scale(1, 1); }
-      100% { transform: translateY(-12px) scale(1.08, 0.95); }
+    .anim-jacks #jack-arm-r {
+      animation: jack-arm-right 0.7s infinite alternate ease-in-out;
+      transform-origin: 68px 32px;
     }
-
-    .anim-push-ups {
-      animation: pushup-move 1.2s infinite alternate ease-in-out;
+    .anim-jacks #jack-leg-l {
+      animation: jack-leg-left 0.7s infinite alternate ease-in-out;
+      transform-origin: 42px 75px;
     }
-    @keyframes pushup-move {
-      0% { transform: rotate(-75deg) translateY(0); }
-      100% { transform: rotate(-75deg) translateY(25px); }
-    }
-
-    .anim-squats {
-      animation: squat-move 1s infinite alternate ease-in-out;
-    }
-    @keyframes squat-move {
-      0% { transform: translateY(0) scaleY(1); }
-      100% { transform: translateY(30px) scaleY(0.75); }
+    .anim-jacks #jack-leg-r {
+      animation: jack-leg-right 0.7s infinite alternate ease-in-out;
+      transform-origin: 58px 75px;
     }
 
-    .anim-crunches {
-      animation: crunch-move 0.9s infinite alternate ease-in-out;
-    }
-    @keyframes crunch-move {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(15deg) translateY(10px); }
-    }
+    @keyframes jack-arm-left { 0% { transform: rotate(0deg); } 100% { transform: rotate(-130deg); } }
+    @keyframes jack-arm-right { 0% { transform: rotate(0deg); } 100% { transform: rotate(130deg); } }
+    @keyframes jack-leg-left { 0% { transform: rotate(0deg); } 100% { transform: rotate(-22deg); } }
+    @keyframes jack-leg-right { 0% { transform: rotate(0deg); } 100% { transform: rotate(22deg); } }
 
-    .anim-rest {
-      animation: rest-breathe 2.5s infinite alternate ease-in-out;
+    .anim-pushups svg {
+      animation: pushup-body 1.1s infinite alternate ease-in-out;
+      transform-origin: 85px 85px;
     }
-    @keyframes rest-breathe {
-      0% { transform: scale(0.98); opacity: 0.8; }
-      100% { transform: scale(1.02); opacity: 1; }
+    @keyframes pushup-body { 0% { transform: translateY(0px) rotate(0deg); } 100% { transform: translateY(22px) rotate(3deg); } }
+
+    .anim-squats #squat-torso {
+      animation: squat-hips 1s infinite alternate ease-in-out;
+      transform-origin: 50px 100px;
     }
+    @keyframes squat-hips { 0% { transform: translateY(0px); } 100% { transform: translateY(28px) scaleY(0.92); } }
+
+    .anim-crunches #crunch-torso {
+      animation: crunch-flex 0.9s infinite alternate ease-in-out;
+      transform-origin: 50px 65px;
+    }
+    @keyframes crunch-flex { 0% { transform: rotate(0deg); } 100% { transform: rotate(-22deg); } }
+
+    .anim-rest { animation: rest-pulse 2.5s infinite alternate ease-in-out; }
+    @keyframes rest-pulse { 0% { transform: scale(0.97); opacity: 0.85; } 100% { transform: scale(1.02); opacity: 1; } }
 
     .exercise-title {
       font-size: 26px;
@@ -180,10 +189,7 @@
     .phase-work { background-color: rgba(48, 209, 88, 0.2); color: var(--accent-work); }
     .phase-rest { background-color: rgba(10, 132, 255, 0.2); color: var(--accent-rest); }
 
-    .timer-display {
-      text-align: center;
-      margin: 8px 0;
-    }
+    .timer-display { text-align: center; margin: 8px 0; }
 
     .time-left {
       font-size: 72px;
@@ -212,10 +218,7 @@
       margin-bottom: 12px;
     }
 
-    .setting-row label {
-      font-size: 15px;
-      color: var(--subtext-color);
-    }
+    .setting-row label { font-size: 15px; color: var(--subtext-color); }
 
     .setting-row input {
       width: 65px;
@@ -228,11 +231,7 @@
       text-align: center;
     }
 
-    .btn-group {
-      display: flex;
-      gap: 12px;
-      margin-top: 10px;
-    }
+    .btn-group { display: flex; gap: 12px; margin-top: 10px; }
 
     .btn {
       flex: 1;
@@ -247,7 +246,7 @@
     .btn-start { background-color: var(--accent-work); color: #000; }
     .btn-pause { background-color: #ff9f0a; color: #000; }
     .btn-reset { background-color: var(--card-inner); color: var(--danger-color); }
-    .btn-add { background-color: var(--accent-rest); color: #fff; border-radius: 10px; padding: 10px 16px; }
+    .btn-add { background-color: var(--accent-rest); color: #fff; border-radius: 10px; padding: 12px; }
 
     .manager-content {
       padding: 20px;
@@ -272,6 +271,7 @@
       padding: 12px;
       border-radius: 10px;
       font-size: 15px;
+      width: 100%;
     }
 
     .ex-list {
@@ -290,28 +290,10 @@
       align-items: center;
     }
 
-    .ex-info {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .ex-name {
-      font-size: 16px;
-      font-weight: 600;
-    }
-
-    .ex-target {
-      font-size: 12px;
-      color: var(--subtext-color);
-      text-transform: uppercase;
-      margin-top: 2px;
-    }
-
-    .ex-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .ex-info { display: flex; flex-direction: column; }
+    .ex-name { font-size: 16px; font-weight: 600; }
+    .ex-target { font-size: 12px; color: var(--subtext-color); text-transform: uppercase; margin-top: 2px; }
+    .ex-actions { display: flex; align-items: center; gap: 8px; }
 
     .icon-btn {
       background: none;
@@ -323,7 +305,6 @@
     }
 
     .icon-btn.delete { color: var(--danger-color); }
-
     .hidden { display: none !important; }
   </style>
 </head>
@@ -337,42 +318,79 @@
   <div id="timerView" class="view">
     <div class="diagram-container">
       <div class="anatomy-card">
-        <div class="figure-container" id="figureBox">
-          <!-- Detailed Vector Anatomical Model -->
-          <svg width="140" height="200" viewBox="0 0 100 140">
-            <!-- Head & Neck -->
-            <circle cx="50" cy="15" r="8" class="skeleton-base" />
-            
-            <!-- Deltoids / Shoulders -->
-            <path id="m-shoulders-left" class="muscle" d="M 34 26 C 30 28 32 36 36 36 C 38 32 38 28 34 26 Z" />
-            <path id="m-shoulders-right" class="muscle" d="M 66 26 C 70 28 68 36 64 36 C 62 32 62 28 66 26 Z" />
 
-            <!-- Pectorals / Chest -->
-            <path id="m-chest" class="muscle" d="M 38 28 Q 50 30 50 40 Q 38 40 38 28 Z M 62 28 Q 50 30 50 40 Q 62 40 62 28 Z" />
+        <!-- FRAME 1: Standing / Jumping Jacks -->
+        <div class="figure-frame active" id="frame-standing">
+          <svg width="120" height="160" viewBox="0 0 100 140">
+            <circle cx="50" cy="16" r="8" class="skeleton-base" />
+            <path d="M 42 26 L 58 26 L 54 75 L 46 75 Z" class="skeleton-base" />
+            <path id="m-abs-standing" class="muscle" d="M 44 38 L 56 38 L 54 68 L 46 68 Z" />
 
-            <!-- Lats / Back -->
-            <path id="m-back" class="muscle" d="M 35 38 C 35 50 42 54 44 54 L 42 38 Z M 65 38 C 65 50 58 54 56 54 L 58 38 Z" />
+            <g id="jack-arm-l">
+              <path d="M 38 28 L 24 58" class="skeleton-base" stroke-width="4" stroke="#2c2c2e" />
+              <path id="m-shoulders-l1" class="muscle" d="M 34 26 C 30 28 32 36 36 36 Z" />
+              <path id="m-arms-l1" class="muscle" d="M 33 34 L 25 54 L 29 55 L 36 36 Z" />
+            </g>
 
-            <!-- Rectus Abdominis / Core -->
-            <path id="m-abs" class="muscle" d="M 44 42 L 56 42 L 55 48 L 45 48 Z M 44 50 L 56 50 L 55 56 L 45 56 Z M 45 58 L 55 58 L 54 66 L 46 66 Z" />
+            <g id="jack-arm-r">
+              <path d="M 62 28 L 76 58" class="skeleton-base" stroke-width="4" stroke="#2c2c2e" />
+              <path id="m-shoulders-r1" class="muscle" d="M 66 26 C 70 28 68 36 64 36 Z" />
+              <path id="m-arms-r1" class="muscle" d="M 67 34 L 75 54 L 71 55 L 64 36 Z" />
+            </g>
 
-            <!-- Biceps / Triceps / Arms -->
-            <path id="m-arms-left" class="muscle" d="M 31 38 C 28 42 29 52 32 54 C 35 52 35 42 31 38 Z" />
-            <path id="m-arms-right" class="muscle" d="M 69 38 C 72 42 71 52 68 54 C 65 52 65 42 69 38 Z" />
+            <g id="jack-leg-l">
+              <path d="M 45 75 L 38 130" class="skeleton-base" stroke-width="5" stroke="#2c2c2e" />
+              <path id="m-legs-l1" class="muscle" d="M 46 75 L 38 110 L 44 110 L 49 75 Z" />
+            </g>
 
-            <!-- Forearms -->
-            <path id="m-forearms-left" class="muscle" d="M 28 56 C 26 62 28 70 30 72 C 32 70 32 62 28 56 Z" />
-            <path id="m-forearms-right" class="muscle" d="M 72 56 C 74 62 72 70 70 72 C 68 70 68 62 72 56 Z" />
-
-            <!-- Quadriceps / Legs -->
-            <path id="m-legs-left" class="muscle" d="M 40 70 C 36 80 38 100 44 102 C 48 98 46 80 44 70 Z" />
-            <path id="m-legs-right" class="muscle" d="M 60 70 C 64 80 62 100 56 102 C 52 98 54 80 56 70 Z" />
-
-            <!-- Calves -->
-            <path id="m-calves-left" class="muscle" d="M 39 106 C 36 114 38 126 41 130 C 43 126 43 114 41 106 Z" />
-            <path id="m-calves-right" class="muscle" d="M 61 106 C 64 114 62 126 59 130 C 57 126 57 114 59 106 Z" />
+            <g id="jack-leg-r">
+              <path d="M 55 75 L 62 130" class="skeleton-base" stroke-width="5" stroke="#2c2c2e" />
+              <path id="m-legs-r1" class="muscle" d="M 54 75 L 62 110 L 56 110 L 51 75 Z" />
+            </g>
           </svg>
         </div>
+
+        <!-- FRAME 2: Push-ups Horizontal -->
+        <div class="figure-frame" id="frame-pushup">
+          <svg width="150" height="120" viewBox="0 0 120 100">
+            <circle cx="22" cy="45" r="7" class="skeleton-base" />
+            <path d="M 28 48 L 95 55" class="skeleton-base" stroke-width="8" stroke="#2c2c2e" />
+
+            <path id="m-chest-pushup" class="muscle" d="M 32 45 L 48 46 L 46 56 L 32 54 Z" />
+            <path id="m-arms-pushup" class="muscle" d="M 32 50 L 40 75 L 45 75 L 38 50 Z" />
+            <path id="m-abs-pushup" class="muscle" d="M 50 47 L 75 50 L 73 57 L 48 55 Z" />
+
+            <path d="M 34 50 L 34 78 L 44 78" class="skeleton-base" stroke-width="3" fill="none" stroke="#48484a" />
+            <line x1="10" y1="78" x2="110" y2="78" stroke="#3a3a3c" stroke-width="2" />
+          </svg>
+        </div>
+
+        <!-- FRAME 3: Squat Posture -->
+        <div class="figure-frame" id="frame-squat">
+          <svg width="120" height="160" viewBox="0 0 100 140">
+            <path d="M 38 100 L 38 130 M 62 100 L 62 130" stroke="#2c2c2e" stroke-width="6" stroke-linecap="round" />
+            <g id="squat-torso">
+              <circle cx="50" cy="20" r="8" class="skeleton-base" />
+              <path d="M 44 28 L 56 28 L 54 70 L 46 70 Z" class="skeleton-base" />
+              <path id="m-legs-squat" class="muscle" d="M 45 70 L 32 100 L 42 100 L 50 70 Z M 55 70 L 68 100 L 58 100 L 50 70 Z" />
+            </g>
+          </svg>
+        </div>
+
+        <!-- FRAME 4: Crunches Posture -->
+        <div class="figure-frame" id="frame-crunch">
+          <svg width="150" height="120" viewBox="0 0 120 100">
+            <line x1="10" y1="80" x2="110" y2="80" stroke="#3a3a3c" stroke-width="2" />
+            <path d="M 65 80 L 85 55 L 100 80" stroke="#2c2c2e" stroke-width="6" fill="none" stroke-linecap="round" />
+
+            <g id="crunch-torso">
+              <circle cx="25" cy="55" r="7" class="skeleton-base" />
+              <path d="M 30 60 L 65 80" stroke="#2c2c2e" stroke-width="8" stroke-linecap="round" />
+              <path id="m-abs-crunch" class="muscle" d="M 34 58 L 60 74 L 56 80 L 32 64 Z" />
+            </g>
+          </svg>
+        </div>
+
       </div>
 
       <div id="phaseBadge" class="phase-badge phase-work">Ready</div>
@@ -408,15 +426,40 @@
     <div class="manager-content">
       <div class="add-form">
         <h3>Add New Exercise</h3>
-        <input type="text" id="newExName" placeholder="Exercise Name (e.g. Pull-ups)">
+        
+        <!-- Preformed Datalist Auto-Complete & Custom Text Entry -->
+        <input type="text" id="newExName" list="exercisePresets" placeholder="Type or select exercise (e.g. Burpees)" oninput="autoDetectConfig()">
+        
+        <datalist id="exercisePresets">
+          <option value="Jumping Jacks">
+          <option value="Push-ups">
+          <option value="Squats">
+          <option value="Crunches">
+          <option value="Plank">
+          <option value="Lunges">
+          <option value="Burpees">
+          <option value="Mountain Climbers">
+          <option value="High Knees">
+          <option value="Dips">
+          <option value="Leg Raises">
+        </datalist>
+
         <select id="newExMuscle">
+          <option value="legs">Legs (Quads &amp; Calves)</option>
           <option value="chest">Chest (Pectorals)</option>
           <option value="abs">Core / Abs</option>
-          <option value="legs">Legs (Quads &amp; Calves)</option>
           <option value="arms">Arms (Biceps &amp; Triceps)</option>
           <option value="shoulders">Shoulders (Deltoids)</option>
           <option value="back">Back (Lats &amp; Traps)</option>
         </select>
+
+        <select id="newExAnimation">
+          <option value="anim-jacks">Standing / Jacks Motion</option>
+          <option value="anim-pushups">Push-up Motion</option>
+          <option value="anim-squats">Squat Motion</option>
+          <option value="anim-crunches">Crunch / Flexion Motion</option>
+        </select>
+
         <button class="btn btn-add" onclick="addExercise()">Add to Routine</button>
       </div>
 
@@ -427,16 +470,33 @@
   </div>
 
   <script>
+    // Presets catalog matching names to targeted animation frames & muscles
+    var exerciseDictionary = {
+      "jumping jacks": { muscle: "legs", frame: "frame-standing", anim: "anim-jacks" },
+      "high knees": { muscle: "legs", frame: "frame-standing", anim: "anim-jacks" },
+      "lunges": { muscle: "legs", frame: "frame-squat", anim: "anim-squats" },
+      "squats": { muscle: "legs", frame: "frame-squat", anim: "anim-squats" },
+      "push-ups": { muscle: "chest", frame: "frame-pushup", anim: "anim-pushups" },
+      "pushups": { muscle: "chest", frame: "frame-pushup", anim: "anim-pushups" },
+      "dips": { muscle: "arms", frame: "frame-pushup", anim: "anim-pushups" },
+      "crunches": { muscle: "abs", frame: "frame-crunch", anim: "anim-crunches" },
+      "sit-ups": { muscle: "abs", frame: "frame-crunch", anim: "anim-crunches" },
+      "leg raises": { muscle: "abs", frame: "frame-crunch", anim: "anim-crunches" },
+      "plank": { muscle: "abs", frame: "frame-pushup", anim: "anim-pushups" },
+      "mountain climbers": { muscle: "abs", frame: "frame-pushup", anim: "anim-pushups" },
+      "burpees": { muscle: "legs", frame: "frame-standing", anim: "anim-jacks" }
+    };
+
     var defaultExercises = [
-      { id: 1, name: "Jumping Jacks", muscle: "legs", anim: "anim-jumping-jacks" },
-      { id: 2, name: "Push-ups", muscle: "chest", anim: "anim-push-ups" },
-      { id: 3, name: "Crunches", muscle: "abs", anim: "anim-crunches" },
-      { id: 4, name: "Squats", muscle: "legs", anim: "anim-squats" }
+      { id: 1, name: "Jumping Jacks", muscle: "legs", frame: "frame-standing", anim: "anim-jacks" },
+      { id: 2, name: "Push-ups", muscle: "chest", frame: "frame-pushup", anim: "anim-pushups" },
+      { id: 3, name: "Crunches", muscle: "abs", frame: "frame-crunch", anim: "anim-crunches" },
+      { id: 4, name: "Squats", muscle: "legs", frame: "frame-squat", anim: "anim-squats" }
     ];
 
     var exercises = defaultExercises;
     try {
-      var saved = localStorage.getItem('ios_workout_exercises_v2');
+      var saved = localStorage.getItem('ios_workout_exercises_v4');
       if (saved) exercises = JSON.parse(saved);
     } catch (e) {
       exercises = defaultExercises;
@@ -448,9 +508,18 @@
     var timeRemaining = 0;
     var timerInterval = null;
 
+    function autoDetectConfig() {
+      var nameVal = document.getElementById('newExName').value.trim().toLowerCase();
+      if (exerciseDictionary[nameVal]) {
+        var match = exerciseDictionary[nameVal];
+        document.getElementById('newExMuscle').value = match.muscle;
+        document.getElementById('newExAnimation').value = match.anim;
+      }
+    }
+
     function saveExercises() {
       try {
-        localStorage.setItem('ios_workout_exercises_v2', JSON.stringify(exercises));
+        localStorage.setItem('ios_workout_exercises_v4', JSON.stringify(exercises));
       } catch (e) {}
       renderManagerList();
       if (!isRunning) resetWorkout();
@@ -478,37 +547,49 @@
       }
     }
 
-    function highlightMuscle(targetMuscle) {
-      var allMuscles = document.querySelectorAll('.muscle');
-      for (var i = 0; i < allMuscles.length; i++) {
-        allMuscles[i].classList.remove('active');
+    function renderFrameAndMuscle(frameId, targetMuscle, isAnimActive, animClass) {
+      var frames = document.querySelectorAll('.figure-frame');
+      frames.forEach(function(f) {
+        f.classList.remove('active');
+        f.className = 'figure-frame';
+      });
+
+      var activeFrame = document.getElementById(frameId) || document.getElementById('frame-standing');
+      activeFrame.classList.add('active');
+
+      if (isAnimActive && animClass) {
+        activeFrame.classList.add(animClass);
+      } else {
+        activeFrame.classList.add('anim-rest');
       }
+
+      var muscles = document.querySelectorAll('.muscle');
+      muscles.forEach(function(m) { m.classList.remove('active'); });
 
       if (targetMuscle === 'chest') {
-        document.getElementById('m-chest').classList.add('active');
+        var el = document.getElementById('m-chest-pushup');
+        if (el) el.classList.add('active');
       } else if (targetMuscle === 'abs') {
-        document.getElementById('m-abs').classList.add('active');
+        ['m-abs-standing', 'm-abs-pushup', 'm-abs-crunch'].forEach(function(id) {
+          var el = document.getElementById(id);
+          if (el) el.classList.add('active');
+        });
       } else if (targetMuscle === 'legs') {
-        document.getElementById('m-legs-left').classList.add('active');
-        document.getElementById('m-legs-right').classList.add('active');
-        document.getElementById('m-calves-left').classList.add('active');
-        document.getElementById('m-calves-right').classList.add('active');
+        ['m-legs-l1', 'm-legs-r1', 'm-legs-squat'].forEach(function(id) {
+          var el = document.getElementById(id);
+          if (el) el.classList.add('active');
+        });
       } else if (targetMuscle === 'arms') {
-        document.getElementById('m-arms-left').classList.add('active');
-        document.getElementById('m-arms-right').classList.add('active');
-        document.getElementById('m-forearms-left').classList.add('active');
-        document.getElementById('m-forearms-right').classList.add('active');
+        ['m-arms-l1', 'm-arms-r1', 'm-arms-pushup'].forEach(function(id) {
+          var el = document.getElementById(id);
+          if (el) el.classList.add('active');
+        });
       } else if (targetMuscle === 'shoulders') {
-        document.getElementById('m-shoulders-left').classList.add('active');
-        document.getElementById('m-shoulders-right').classList.add('active');
-      } else if (targetMuscle === 'back') {
-        document.getElementById('m-back').classList.add('active');
+        ['m-shoulders-l1', 'm-shoulders-r1'].forEach(function(id) {
+          var el = document.getElementById(id);
+          if (el) el.classList.add('active');
+        });
       }
-    }
-
-    function setAnimation(animClass) {
-      var fig = document.getElementById('figureBox');
-      fig.className = 'figure-container ' + (animClass || '');
     }
 
     function toggleTimer() {
@@ -548,7 +629,7 @@
       clearInterval(timerInterval);
       document.getElementById('startBtn').innerText = "Resume";
       document.getElementById('startBtn').className = "btn btn-start";
-      setAnimation('anim-rest');
+      updateDisplay();
     }
 
     function switchPhase() {
@@ -571,7 +652,7 @@
     }
 
     function updateDisplay() {
-      var currentEx = exercises[currentExerciseIndex] || { name: "None", muscle: "none", anim: "" };
+      var currentEx = exercises[currentExerciseIndex] || { name: "None", muscle: "none", frame: "frame-standing", anim: "" };
       document.getElementById('timer').innerText = formatTime(timeRemaining);
       document.getElementById('roundDisplay').innerText = "Exercise " + (currentExerciseIndex + 1) + " of " + exercises.length;
 
@@ -584,25 +665,16 @@
         phaseBadge.innerText = "Exercise";
         exTitle.innerText = currentEx.name;
         muscleLabel.innerText = "Target: " + (currentEx.muscle ? currentEx.muscle.toUpperCase() : "GENERAL");
-        highlightMuscle(currentEx.muscle);
         
-        // Auto-assign animation class if none defined
-        var animName = currentEx.anim;
-        if (!animName) {
-          if (currentEx.muscle === 'chest') animName = 'anim-push-ups';
-          else if (currentEx.muscle === 'abs') animName = 'anim-crunches';
-          else if (currentEx.muscle === 'legs') animName = 'anim-squats';
-          else animName = 'anim-jumping-jacks';
-        }
-        setAnimation(isRunning ? animName : 'anim-rest');
+        renderFrameAndMuscle(currentEx.frame || 'frame-standing', currentEx.muscle, isRunning, currentEx.anim);
       } else {
         phaseBadge.className = "phase-badge phase-rest";
         phaseBadge.innerText = "Pause / Rest";
         exTitle.innerText = "Rest & Prepare";
         var nextEx = exercises[(currentExerciseIndex + 1) % exercises.length];
         muscleLabel.innerText = "Next up: " + (nextEx ? nextEx.name : "Finish");
-        highlightMuscle('none');
-        setAnimation('anim-rest');
+        
+        renderFrameAndMuscle('frame-standing', 'none', false, '');
       }
     }
 
@@ -651,22 +723,24 @@
 
     function addExercise() {
       var nameInput = document.getElementById('newExName');
-      var muscleSelect = document.getElementById('newExMuscle');
       var name = nameInput.value.trim();
 
       if (!name) return;
 
-      var selectedMuscle = muscleSelect.value;
-      var animClass = "anim-jumping-jacks";
-      if (selectedMuscle === 'chest') animClass = "anim-push-ups";
-      if (selectedMuscle === 'abs') animClass = "anim-crunches";
-      if (selectedMuscle === 'legs') animClass = "anim-squats";
+      var muscleSelect = document.getElementById('newExMuscle').value;
+      var animSelect = document.getElementById('newExAnimation').value;
+      var frame = "frame-standing";
+
+      if (animSelect === 'anim-pushups') frame = "frame-pushup";
+      else if (animSelect === 'anim-crunches') frame = "frame-crunch";
+      else if (animSelect === 'anim-squats') frame = "frame-squat";
 
       exercises.push({
         id: Date.now(),
         name: name,
-        muscle: selectedMuscle,
-        anim: animClass
+        muscle: muscleSelect,
+        frame: frame,
+        anim: animSelect
       });
 
       nameInput.value = '';
