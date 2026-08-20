@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Minimalist Workout Timer</title>
+  <title>Dumbbell Workout Timer</title>
 
   <!-- iOS PWA Metadata -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Workout">
+  <meta name="apple-mobile-web-app-title" content="Dumbbell Workout">
 
   <style>
     :root {
@@ -95,33 +95,32 @@
       overflow: hidden;
     }
 
-    /* 2-Frame Image Alternator */
-    .exercise-viewer {
-      position: relative;
+    /* Embedded SVG Frames */
+    .exercise-frame {
+      display: none;
       width: 200px;
       height: 200px;
+      align-items: center;
+      justify-content: center;
     }
 
-    .pos-img {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      filter: invert(1) brightness(1.8) contrast(1.2); /* Inverts dark art to stark white-on-black */
+    .exercise-frame.active {
+      display: flex;
+    }
+
+    /* Form Positions inside SVG */
+    .pos-a, .pos-b {
       transition: opacity 0.3s ease-in-out;
     }
 
-    /* Rest/Static state */
-    .pos-img.img-b { opacity: 0; }
-    .pos-img.img-a { opacity: 1; }
+    .pos-b { opacity: 0; }
+    .pos-a { opacity: 1; }
 
-    /* Motion Animation via Opacity Toggle */
-    .animating .pos-img.img-a {
+    /* Alternate Motion Effect */
+    .animating .pos-a {
       animation: toggleStageA 1.2s infinite alternate ease-in-out;
     }
-    .animating .pos-img.img-b {
+    .animating .pos-b {
       animation: toggleStageB 1.2s infinite alternate ease-in-out;
     }
 
@@ -294,23 +293,114 @@
 <body>
 
   <header>
-    <h1 id="headerTitle">Workout Timer</h1>
+    <h1 id="headerTitle">Dumbbell Timer</h1>
     <button class="nav-btn" id="toggleViewBtn" onclick="toggleView()">Manage Exercises</button>
   </header>
 
   <div id="timerView" class="view">
     <div class="diagram-container">
       <div class="anatomy-card">
-        <!-- Dual Image Viewer -->
-        <div class="exercise-viewer" id="exerciseViewer">
-          <img id="imgPosA" src="" class="pos-img img-a" alt="Position A">
-          <img id="imgPosB" src="" class="pos-img img-b" alt="Position B">
+
+        <!-- BICEPS: Bicep Curls -->
+        <div class="exercise-frame active" id="frame-biceps">
+          <svg width="180" height="180" viewBox="0 0 100 100" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Bench Base -->
+            <path d="M 20 85 L 80 85" stroke="#48484a" stroke-width="2" />
+            <path d="M 35 85 L 35 50 L 65 50" stroke="#48484a" stroke-width="2" />
+            
+            <!-- Pos A: Arms Extended -->
+            <g class="pos-a">
+              <circle cx="50" cy="22" r="7" fill="#ffffff" stroke="none" />
+              <path d="M 50 29 L 50 55" />
+              <path d="M 50 38 L 50 62" /> <!-- Arm down -->
+              <circle cx="50" cy="65" r="4" fill="#ffffff" /> <!-- Dumbbell -->
+            </g>
+
+            <!-- Pos B: Peak Curl Contraction -->
+            <g class="pos-b">
+              <circle cx="50" cy="22" r="7" fill="#ffffff" stroke="none" />
+              <path d="M 50 29 L 50 55" />
+              <path d="M 50 38 L 42 48 L 50 35" /> <!-- Curled Arm -->
+              <circle cx="50" cy="33" r="4" fill="#ffffff" /> <!-- Dumbbell top -->
+            </g>
+          </svg>
         </div>
+
+        <!-- TRICEPS: Overhead Tricep Extension -->
+        <div class="exercise-frame" id="frame-triceps">
+          <svg width="180" height="180" viewBox="0 0 100 100" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M 30 85 L 70 85" stroke="#48484a" stroke-width="2" />
+            
+            <!-- Pos A: Elbows Flexed Behind Head -->
+            <g class="pos-a">
+              <circle cx="50" cy="45" r="7" fill="#ffffff" stroke="none" />
+              <path d="M 50 52 L 50 85" />
+              <path d="M 50 60 L 52 35 L 42 42" /> <!-- Lowered forearm -->
+              <circle cx="40" cy="44" r="4" fill="#ffffff" /> <!-- Dumbbell behind -->
+            </g>
+
+            <!-- Pos B: Fully Extended Overhead -->
+            <g class="pos-b">
+              <circle cx="50" cy="45" r="7" fill="#ffffff" stroke="none" />
+              <path d="M 50 52 L 50 85" />
+              <path d="M 50 60 L 50 18" /> <!-- Extended overhead -->
+              <circle cx="50" cy="14" r="4" fill="#ffffff" /> <!-- Dumbbell top -->
+            </g>
+          </svg>
+        </div>
+
+        <!-- CHEST: Flat Dumbbell Bench Press -->
+        <div class="exercise-frame" id="frame-chest">
+          <svg width="180" height="180" viewBox="0 0 100 100" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M 15 65 L 85 65 M 30 65 L 30 85 M 70 65 L 70 85" stroke="#48484a" stroke-width="2" />
+            
+            <!-- Pos A: Dumbbells at Chest Level -->
+            <g class="pos-a">
+              <circle cx="22" cy="57" r="6" fill="#ffffff" stroke="none" />
+              <path d="M 28 60 L 75 60" /> <!-- Torso on bench -->
+              <path d="M 45 60 L 45 50 M 45 50 L 40 52" /> <!-- Forearm low -->
+              <circle cx="40" cy="50" r="4" fill="#ffffff" /> <!-- Weight low -->
+            </g>
+
+            <!-- Pos B: Pressed Overhead -->
+            <g class="pos-b">
+              <circle cx="22" cy="57" r="6" fill="#ffffff" stroke="none" />
+              <path d="M 28 60 L 75 60" />
+              <path d="M 45 60 L 45 30" /> <!-- Extended Arm -->
+              <circle cx="45" cy="26" r="4" fill="#ffffff" /> <!-- Weight top -->
+            </g>
+          </svg>
+        </div>
+
+        <!-- BACK: Single-Arm Dumbbell Row -->
+        <div class="exercise-frame" id="frame-back">
+          <svg width="180" height="180" viewBox="0 0 100 100" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M 20 75 L 80 75" stroke="#48484a" stroke-width="2" />
+            <path d="M 30 75 L 30 50 L 50 50" stroke="#48484a" stroke-width="2" />
+            
+            <!-- Pos A: Arm Extended Lowered -->
+            <g class="pos-a">
+              <circle cx="68" cy="35" r="6" fill="#ffffff" stroke="none" />
+              <path d="M 64 38 L 38 48" /> <!-- Flat spine hinge -->
+              <path d="M 50 43 L 50 72" /> <!-- Arm hanging down -->
+              <circle cx="50" cy="75" r="4" fill="#ffffff" /> <!-- Dumbbell bottom -->
+            </g>
+
+            <!-- Pos B: Elbow Pulled to Hip Row -->
+            <g class="pos-b">
+              <circle cx="68" cy="35" r="6" fill="#ffffff" stroke="none" />
+              <path d="M 64 38 L 38 48" />
+              <path d="M 50 43 L 48 30 L 42 45" /> <!-- Pulled elbow -->
+              <circle cx="42" cy="47" r="4" fill="#ffffff" /> <!-- Dumbbell to hip -->
+            </g>
+          </svg>
+        </div>
+
       </div>
 
       <div id="phaseBadge" class="phase-badge phase-work">Ready</div>
-      <div class="exercise-title" id="exerciseName">Jumping Jacks</div>
-      <div class="muscle-label" id="muscleLabel">Target: LEGS & CALVES</div>
+      <div class="exercise-title" id="exerciseName">Dumbbell Curls</div>
+      <div class="muscle-label" id="muscleLabel">Target: BICEPS</div>
     </div>
 
     <div class="timer-display">
@@ -340,28 +430,34 @@
   <div id="managerView" class="view hidden">
     <div class="manager-content">
       <div class="add-form">
-        <h3>Add New Exercise</h3>
+        <h3>Add Dumbbell Exercise</h3>
         
-        <!-- Preformed Datalist Auto-Complete & Custom Text Entry -->
-        <input type="text" id="newExName" list="exercisePresets" placeholder="Type or select exercise (e.g. Squats)" oninput="autoDetectConfig()">
+        <!-- Preformed Datalist Auto-Complete -->
+        <input type="text" id="newExName" list="exercisePresets" placeholder="Type or select exercise (e.g. Bicep Curls)" oninput="autoDetectConfig()">
         
         <datalist id="exercisePresets">
-          <option value="Jumping Jacks">
-          <option value="Push-ups">
-          <option value="Squats">
-          <option value="Crunches">
-          <option value="Plank">
-          <option value="Lunges">
-          <option value="Burpees">
-          <option value="High Knees">
+          <option value="Dumbbell Curls">
+          <option value="Hammer Curls">
+          <option value="Tricep Extensions">
+          <option value="Tricep Kickbacks">
+          <option value="Dumbbell Bench Press">
+          <option value="Chest Flyes">
+          <option value="Single-Arm Rows">
+          <option value="Bent-Over Rows">
         </datalist>
 
         <select id="newExMuscle">
-          <option value="legs">Legs (Quads &amp; Calves)</option>
+          <option value="biceps">Biceps (Arms)</option>
+          <option value="triceps">Triceps (Arms)</option>
           <option value="chest">Chest (Pectorals)</option>
-          <option value="abs">Core / Abs</option>
-          <option value="arms">Arms (Biceps &amp; Triceps)</option>
-          <option value="shoulders">Shoulders (Deltoids)</option>
+          <option value="back">Back (Lats &amp; Traps)</option>
+        </select>
+
+        <select id="newExFrame">
+          <option value="frame-biceps">Biceps Motion</option>
+          <option value="frame-triceps">Triceps Motion</option>
+          <option value="frame-chest">Chest Press Motion</option>
+          <option value="frame-back">Back Row Motion</option>
         </select>
 
         <button class="btn btn-add" onclick="addExercise()">Add to Routine</button>
@@ -374,55 +470,31 @@
   </div>
 
   <script>
-    // Dictionary mapping standard exercises to white-on-black phase images (Start/Peak)
     var exerciseLibrary = {
-      "jumping jacks": {
-        muscle: "legs",
-        imgA: "https://svgshare.com/i/14eb.svg", // Stance
-        imgB: "https://svgshare.com/i/14f1.svg"  // Overhead Star
-      },
-      "push-ups": {
-        muscle: "chest",
-        imgA: "https://svgshare.com/i/14ec.svg", // Plank top
-        imgB: "https://svgshare.com/i/14f2.svg"  // Chest low
-      },
-      "pushups": {
-        muscle: "chest",
-        imgA: "https://svgshare.com/i/14ec.svg",
-        imgB: "https://svgshare.com/i/14f2.svg"
-      },
-      "squats": {
-        muscle: "legs",
-        imgA: "https://svgshare.com/i/14ed.svg", // Standing
-        imgB: "https://svgshare.com/i/14f3.svg"  // Parallel Squat
-      },
-      "crunches": {
-        muscle: "abs",
-        imgA: "https://svgshare.com/i/14ee.svg", // Flat rest
-        imgB: "https://svgshare.com/i/14f4.svg"  // Abdominal Flexion
-      },
-      "plank": {
-        muscle: "abs",
-        imgA: "https://svgshare.com/i/14ec.svg",
-        imgB: "https://svgshare.com/i/14ec.svg"
-      },
-      "lunges": {
-        muscle: "legs",
-        imgA: "https://svgshare.com/i/14ed.svg",
-        imgB: "https://svgshare.com/i/14f3.svg"
-      }
+      "dumbbell curls": { muscle: "biceps", frame: "frame-biceps" },
+      "bicep curls": { muscle: "biceps", frame: "frame-biceps" },
+      "hammer curls": { muscle: "biceps", frame: "frame-biceps" },
+      "tricep extensions": { muscle: "triceps", frame: "frame-triceps" },
+      "triceps extension": { muscle: "triceps", frame: "frame-triceps" },
+      "tricep kickbacks": { muscle: "triceps", frame: "frame-triceps" },
+      "dumbbell bench press": { muscle: "chest", frame: "frame-chest" },
+      "chest press": { muscle: "chest", frame: "frame-chest" },
+      "chest flyes": { muscle: "chest", frame: "frame-chest" },
+      "single-arm rows": { muscle: "back", frame: "frame-back" },
+      "dumbbell rows": { muscle: "back", frame: "frame-back" },
+      "bent-over rows": { muscle: "back", frame: "frame-back" }
     };
 
     var defaultExercises = [
-      { id: 1, name: "Jumping Jacks", muscle: "legs", imgA: exerciseLibrary["jumping jacks"].imgA, imgB: exerciseLibrary["jumping jacks"].imgB },
-      { id: 2, name: "Push-ups", muscle: "chest", imgA: exerciseLibrary["push-ups"].imgA, imgB: exerciseLibrary["push-ups"].imgB },
-      { id: 3, name: "Squats", muscle: "legs", imgA: exerciseLibrary["squats"].imgA, imgB: exerciseLibrary["squats"].imgB },
-      { id: 4, name: "Crunches", muscle: "abs", imgA: exerciseLibrary["crunches"].imgA, imgB: exerciseLibrary["crunches"].imgB }
+      { id: 1, name: "Dumbbell Curls", muscle: "biceps", frame: "frame-biceps" },
+      { id: 2, name: "Tricep Extensions", muscle: "triceps", frame: "frame-triceps" },
+      { id: 3, name: "Dumbbell Bench Press", muscle: "chest", frame: "frame-chest" },
+      { id: 4, name: "Single-Arm Rows", muscle: "back", frame: "frame-back" }
     ];
 
     var exercises = defaultExercises;
     try {
-      var saved = localStorage.getItem('ios_workout_exercises_v5');
+      var saved = localStorage.getItem('ios_dumbbell_exercises_v6');
       if (saved) exercises = JSON.parse(saved);
     } catch (e) {
       exercises = defaultExercises;
@@ -439,12 +511,13 @@
       if (exerciseLibrary[nameVal]) {
         var match = exerciseLibrary[nameVal];
         document.getElementById('newExMuscle').value = match.muscle;
+        document.getElementById('newExFrame').value = match.frame;
       }
     }
 
     function saveExercises() {
       try {
-        localStorage.setItem('ios_workout_exercises_v5', JSON.stringify(exercises));
+        localStorage.setItem('ios_dumbbell_exercises_v6', JSON.stringify(exercises));
       } catch (e) {}
       renderManagerList();
       if (!isRunning) resetWorkout();
@@ -467,8 +540,22 @@
         managerView.classList.add('hidden');
         timerView.classList.remove('hidden');
         toggleBtn.innerText = "Manage Exercises";
-        title.innerText = "Workout Timer";
+        title.innerText = "Dumbbell Timer";
         resetWorkout();
+      }
+    }
+
+    function renderActiveFrame(frameId, isAnimating) {
+      var frames = document.querySelectorAll('.exercise-frame');
+      frames.forEach(function(f) {
+        f.classList.remove('active', 'animating');
+      });
+
+      var target = document.getElementById(frameId) || document.getElementById('frame-biceps');
+      target.classList.add('active');
+
+      if (isAnimating) {
+        target.classList.add('animating');
       }
     }
 
@@ -539,25 +626,14 @@
       var phaseBadge = document.getElementById('phaseBadge');
       var exTitle = document.getElementById('exerciseName');
       var muscleLabel = document.getElementById('muscleLabel');
-      var viewer = document.getElementById('exerciseViewer');
-
-      var imgA = document.getElementById('imgPosA');
-      var imgB = document.getElementById('imgPosB');
 
       if (isWorkPhase) {
         phaseBadge.className = "phase-badge phase-work";
         phaseBadge.innerText = "Work Phase";
         exTitle.innerText = currentEx.name;
-        muscleLabel.innerText = "Target: " + (currentEx.muscle ? currentEx.muscle.toUpperCase() : "GENERAL");
+        muscleLabel.innerText = "Target: " + (currentEx.muscle ? currentEx.muscle.toUpperCase() : "UPPER BODY");
 
-        imgA.src = currentEx.imgA || exerciseLibrary["jumping jacks"].imgA;
-        imgB.src = currentEx.imgB || exerciseLibrary["jumping jacks"].imgB;
-
-        if (isRunning) {
-          viewer.classList.add('animating');
-        } else {
-          viewer.classList.remove('animating');
-        }
+        renderActiveFrame(currentEx.frame || 'frame-biceps', isRunning);
       } else {
         phaseBadge.className = "phase-badge phase-rest";
         phaseBadge.innerText = "Rest Phase";
@@ -565,10 +641,7 @@
         var nextEx = exercises[(currentExerciseIndex + 1) % exercises.length];
         muscleLabel.innerText = "Next up: " + (nextEx ? nextEx.name : "Finish");
 
-        imgA.src = nextEx ? (nextEx.imgA || exerciseLibrary["jumping jacks"].imgA) : exerciseLibrary["jumping jacks"].imgA;
-        imgB.src = nextEx ? (nextEx.imgB || exerciseLibrary["jumping jacks"].imgB) : exerciseLibrary["jumping jacks"].imgB;
-
-        viewer.classList.remove('animating');
+        renderActiveFrame(nextEx ? nextEx.frame : 'frame-biceps', false);
       }
     }
 
@@ -621,15 +694,14 @@
 
       if (!name) return;
 
-      var nameKey = name.toLowerCase();
-      var preset = exerciseLibrary[nameKey] || exerciseLibrary["jumping jacks"];
+      var muscleSelect = document.getElementById('newExMuscle').value;
+      var frameSelect = document.getElementById('newExFrame').value;
 
       exercises.push({
         id: Date.now(),
         name: name,
-        muscle: document.getElementById('newExMuscle').value || preset.muscle,
-        imgA: preset.imgA,
-        imgB: preset.imgB
+        muscle: muscleSelect,
+        frame: frameSelect
       });
 
       nameInput.value = '';
