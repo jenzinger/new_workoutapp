@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Dumbbell Canvas Timer</title>
+  <title>Dumbbell Workout Timer</title>
 
   <!-- iOS PWA Metadata -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -72,7 +72,6 @@
       justify-content: space-between;
     }
 
-    /* Diagram & Canvas Area */
     .diagram-container {
       display: flex;
       flex-direction: column;
@@ -93,11 +92,14 @@
       justify-content: center;
       position: relative;
       overflow: hidden;
+      padding: 20px;
     }
 
-    canvas {
-      width: 200px;
-      height: 200px;
+    .anatomy-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.1));
     }
 
     .exercise-title {
@@ -266,8 +268,8 @@
   <div id="timerView" class="view">
     <div class="diagram-container">
       <div class="anatomy-card">
-        <!-- Interactive Canvas Element -->
-        <canvas id="exerciseCanvas" width="200" height="200"></canvas>
+        <!-- Anatomical Line Art Rendering -->
+        <img id="exerciseArt" src="" alt="Exercise Art">
       </div>
 
       <div id="phaseBadge" class="phase-badge phase-work">Ready</div>
@@ -308,13 +310,9 @@
         
         <datalist id="exercisePresets">
           <option value="Dumbbell Curls">
-          <option value="Hammer Curls">
           <option value="Tricep Extensions">
-          <option value="Tricep Kickbacks">
           <option value="Dumbbell Bench Press">
-          <option value="Chest Flyes">
           <option value="Single-Arm Rows">
-          <option value="Bent-Over Rows">
         </datalist>
 
         <select id="newExMuscle">
@@ -324,11 +322,11 @@
           <option value="back">Back (Lats &amp; Traps)</option>
         </select>
 
-        <select id="newExType">
-          <option value="biceps">Bicep Curl Animation</option>
-          <option value="triceps">Triceps Extension Animation</option>
-          <option value="chest">Chest Press Animation</option>
-          <option value="back">Back Row Animation</option>
+        <select id="newExArt">
+          <option value="biceps">Bicep Curl Illustration</option>
+          <option value="triceps">Triceps Extension Illustration</option>
+          <option value="chest">Chest Press Illustration</option>
+          <option value="back">Back Row Illustration</option>
         </select>
 
         <button class="btn btn-add" onclick="addExercise()">Add to Routine</button>
@@ -341,34 +339,37 @@
   </div>
 
   <script>
-    var canvas = document.getElementById('exerciseCanvas');
-    var ctx = canvas.getContext('2d');
-    var animationFrameId = null;
-    var animProgress = 0;
+    /* EMBEDDED HIGH-CONTRAST VECTOR ART (Option 2) */
+    var artAssets = {
+      biceps: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" stroke="%2330d158" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M40 90 L80 90" stroke="%238e8e93" stroke-width="1.5"/><circle cx="50" cy="22" r="7" fill="%23ffffff"/><path d="M50 29 C45 35 45 45 47 60 L42 85 M47 60 L52 85"/><path d="M46 36 C55 35 60 40 60 48 C60 55 52 58 43 50" stroke="%23ffffff" stroke-width="2.5"/><path d="M42 48 C48 45 52 42 50 36" stroke="%2330d158" stroke-width="2"/><rect x="36" y="44" width="8" height="12" rx="2" fill="%23ffffff" stroke="%2330d158"/></svg>',
+      
+      triceps: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" stroke="%2330d158" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M35 88 L65 88" stroke="%238e8e93" stroke-width="1.5"/><circle cx="50" cy="40" r="7" fill="%23ffffff"/><path d="M50 47 L50 75 L45 88 M50 75 L55 88"/><path d="M48 52 C54 50 56 30 54 22" stroke="%23ffffff" stroke-width="2.5"/><path d="M54 22 C48 18 42 22 40 28" stroke="%2330d158" stroke-width="2.5"/><rect x="34" y="24" width="12" height="7" rx="2" fill="%23ffffff" stroke="%2330d158"/></svg>',
+      
+      chest: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" stroke="%2330d158" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 65 L80 65" stroke="%238e8e93" stroke-width="2"/><circle cx="30" cy="60" r="6" fill="%23ffffff"/><path d="M36 61 L70 61"/><path d="M50 61 C50 50 52 48 46 45 L46 32" stroke="%23ffffff" stroke-width="2.5"/><path d="M58 61 C58 50 60 48 64 45 L64 32" stroke="%23ffffff" stroke-width="2.5"/><rect x="40" y="28" width="12" height="6" rx="2" fill="%23ffffff" stroke="%2330d158"/><rect x="58" y="28" width="12" height="6" rx="2" fill="%23ffffff" stroke="%2330d158"/></svg>',
+      
+      back: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" stroke="%2330d158" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M25 75 L75 75" stroke="%238e8e93" stroke-width="1.5"/><circle cx="68" cy="38" r="6" fill="%23ffffff"/><path d="M64 42 L40 52 L30 75 M40 52 L48 75"/><path d="M56 45 C50 48 45 42 42 32 C40 26 48 30 52 38" stroke="%23ffffff" stroke-width="2.5"/><rect x="36" y="26" width="10" height="10" rx="2" fill="%23ffffff" stroke="%2330d158"/></svg>'
+    };
 
     var exerciseLibrary = {
-      "dumbbell curls": { muscle: "biceps", type: "biceps" },
-      "bicep curls": { muscle: "biceps", type: "biceps" },
-      "hammer curls": { muscle: "biceps", type: "biceps" },
-      "tricep extensions": { muscle: "triceps", type: "triceps" },
-      "triceps extension": { muscle: "triceps", type: "triceps" },
-      "tricep kickbacks": { muscle: "triceps", type: "triceps" },
-      "dumbbell bench press": { muscle: "chest", type: "chest" },
-      "chest press": { muscle: "chest", type: "chest" },
-      "single-arm rows": { muscle: "back", type: "back" },
-      "dumbbell rows": { muscle: "back", type: "back" }
+      "dumbbell curls": { muscle: "biceps", artKey: "biceps" },
+      "bicep curls": { muscle: "biceps", artKey: "biceps" },
+      "tricep extensions": { muscle: "triceps", artKey: "triceps" },
+      "triceps extension": { muscle: "triceps", artKey: "triceps" },
+      "dumbbell bench press": { muscle: "chest", artKey: "chest" },
+      "chest press": { muscle: "chest", artKey: "chest" },
+      "single-arm rows": { muscle: "back", artKey: "back" }
     };
 
     var defaultExercises = [
-      { id: 1, name: "Dumbbell Curls", muscle: "biceps", type: "biceps" },
-      { id: 2, name: "Tricep Extensions", muscle: "triceps", type: "triceps" },
-      { id: 3, name: "Dumbbell Bench Press", muscle: "chest", type: "chest" },
-      { id: 4, name: "Single-Arm Rows", muscle: "back", type: "back" }
+      { id: 1, name: "Dumbbell Curls", muscle: "biceps", artKey: "biceps" },
+      { id: 2, name: "Tricep Extensions", muscle: "triceps", artKey: "triceps" },
+      { id: 3, name: "Dumbbell Bench Press", muscle: "chest", artKey: "chest" },
+      { id: 4, name: "Single-Arm Rows", muscle: "back", artKey: "back" }
     ];
 
     var exercises = defaultExercises;
     try {
-      var saved = localStorage.getItem('ios_dumbbell_canvas_v1');
+      var saved = localStorage.getItem('ios_dumbbell_timer_opt2');
       if (saved) exercises = JSON.parse(saved);
     } catch (e) {
       exercises = defaultExercises;
@@ -380,178 +381,18 @@
     var timeRemaining = 0;
     var timerInterval = null;
 
-    /* --- CANVAS DRAWING FUNCTIONS (Option 1 Math Animations) --- */
-
-    function clearCanvas() {
-      ctx.clearRect(0, 0, 200, 200);
-    }
-
-    function drawHead(x, y, r) {
-      ctx.beginPath();
-      ctx.arc(x, y, r || 8, 0, Math.PI * 2);
-      ctx.fillStyle = '#ffffff';
-      ctx.fill();
-    }
-
-    function drawJoint(x, y, r) {
-      ctx.beginPath();
-      ctx.arc(x, y, r || 4, 0, Math.PI * 2);
-      ctx.fillStyle = '#30d158';
-      ctx.fill();
-    }
-
-    function drawWeight(x, y, r) {
-      ctx.beginPath();
-      ctx.arc(x, y, r || 7, 0, Math.PI * 2);
-      ctx.fillStyle = '#ffffff';
-      ctx.fill();
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = '#30d158';
-      ctx.stroke();
-    }
-
-    function drawLine(x1, y1, x2, y2, width) {
-      ctx.beginPath();
-      ctx.moveTo(x1, y1);
-      ctx.lineTo(x2, y2);
-      ctx.lineWidth = width || 3.5;
-      ctx.strokeStyle = '#ffffff';
-      ctx.stroke();
-    }
-
-    function renderBiceps(factor) {
-      clearCanvas();
-      // Seated Bench
-      drawLine(40, 160, 160, 160, 2);
-      drawLine(80, 160, 80, 100, 2);
-      drawLine(80, 100, 140, 100, 2);
-
-      // Head & Torso
-      drawHead(100, 52);
-      drawLine(100, 60, 100, 100); // Spine
-
-      // Legs
-      drawLine(100, 100, 120, 130);
-      drawLine(120, 130, 120, 160);
-
-      // Bicep Arm Motion
-      var elbowX = 100, elbowY = 78;
-      var curlAngle = 0.2 + (Math.sin(factor) + 1) * 0.9; // Smooth rotation arc
-      var handX = elbowX - Math.sin(curlAngle) * 32;
-      var handY = elbowY + Math.cos(curlAngle) * 32;
-
-      drawLine(100, 68, elbowX, elbowY); // Upper Arm
-      drawLine(elbowX, elbowY, handX, handY); // Forearm
-      drawJoint(elbowX, elbowY);
-      drawWeight(handX, handY);
-    }
-
-    function renderTriceps(factor) {
-      clearCanvas();
-      // Seat
-      drawLine(60, 160, 140, 160, 2);
-      drawLine(100, 160, 100, 110, 2);
-
-      // Head & Torso
-      drawHead(100, 80);
-      drawLine(100, 88, 100, 135); // Spine
-
-      // Vertical Upper Arm (Fixed overhead)
-      var shoulderX = 100, shoulderY = 92;
-      var elbowX = 100, elbowY = 52;
-      drawLine(shoulderX, shoulderY, elbowX, elbowY);
-
-      // Overhead Forearm Arc
-      var extAngle = -0.3 + (Math.sin(factor) + 1) * 0.8;
-      var handX = elbowX - Math.sin(extAngle) * 30;
-      var handY = elbowY - Math.cos(extAngle) * 30;
-
-      drawLine(elbowX, elbowY, handX, handY); // Forearm
-      drawJoint(elbowX, elbowY);
-      drawWeight(handX, handY);
-    }
-
-    function renderChest(factor) {
-      clearCanvas();
-      // Flat Bench
-      drawLine(30, 130, 170, 130, 2);
-      drawLine(50, 130, 50, 160, 2);
-      drawLine(150, 130, 150, 160, 2);
-
-      // Head & Lying Body
-      drawHead(50, 122);
-      drawLine(58, 125, 140, 125); // Spine on bench
-
-      // Pressing Arm Vertical Motion
-      var pressHeight = 100 - (Math.sin(factor) + 1) * 22;
-      var shoulderX = 95, shoulderY = 125;
-      var elbowX = 95, elbowY = (pressHeight + 125) / 2;
-
-      drawLine(shoulderX, shoulderY, elbowX, elbowY);
-      drawLine(elbowX, elbowY, 95, pressHeight);
-      drawJoint(elbowX, elbowY);
-      drawWeight(95, pressHeight);
-    }
-
-    function renderBack(factor) {
-      clearCanvas();
-      // Bench Support
-      drawLine(30, 150, 150, 150, 2);
-      drawLine(60, 150, 60, 100, 2);
-
-      // Bent Over Body Stance
-      drawHead(140, 75);
-      drawLine(132, 80, 80, 95); // Hinged Spine
-      drawLine(80, 95, 60, 150); // Leg
-
-      // Row Pulling Motion
-      var rowOffset = (Math.sin(factor) + 1) * 18;
-      var shoulderX = 110, shoulderY = 86;
-      var handX = 110, handY = 130 - rowOffset;
-      var elbowX = 100, elbowY = 105 - (rowOffset * 0.8);
-
-      drawLine(shoulderX, shoulderY, elbowX, elbowY);
-      drawLine(elbowX, elbowY, handX, handY);
-      drawJoint(elbowX, elbowY);
-      drawWeight(handX, handY);
-    }
-
-    function animateLoop() {
-      if (isRunning && isWorkPhase) {
-        animProgress += 0.05;
-      }
-
-      var currentEx = exercises[currentExerciseIndex] || defaultExercises[0];
-      var type = currentEx.type || 'biceps';
-
-      if (!isWorkPhase) {
-        // Rest state - Static display of next exercise
-        var nextEx = exercises[(currentExerciseIndex + 1) % exercises.length];
-        type = nextEx ? nextEx.type : 'biceps';
-      }
-
-      if (type === 'triceps') renderTriceps(animProgress);
-      else if (type === 'chest') renderChest(animProgress);
-      else if (type === 'back') renderBack(animProgress);
-      else renderBiceps(animProgress);
-
-      animationFrameId = requestAnimationFrame(animateLoop);
-    }
-
-    /* --- TIMER & APP CONTROLS --- */
-
     function autoDetectConfig() {
       var nameVal = document.getElementById('newExName').value.trim().toLowerCase();
       if (exerciseLibrary[nameVal]) {
         var match = exerciseLibrary[nameVal];
         document.getElementById('newExMuscle').value = match.muscle;
-        document.getElementById('newExType').value = match.type;
+        document.getElementById('newExArt').value = match.artKey;
       }
     }
 
     function saveExercises() {
       try {
-        localStorage.setItem('ios_dumbbell_canvas_v1', JSON.stringify(exercises));
+        localStorage.setItem('ios_dumbbell_timer_opt2', JSON.stringify(exercises));
       } catch (e) {}
       renderManagerList();
       if (!isRunning) resetWorkout();
@@ -646,18 +487,24 @@
       var phaseBadge = document.getElementById('phaseBadge');
       var exTitle = document.getElementById('exerciseName');
       var muscleLabel = document.getElementById('muscleLabel');
+      var artImg = document.getElementById('exerciseArt');
+
+      var artKey = currentEx.artKey || 'biceps';
 
       if (isWorkPhase) {
         phaseBadge.className = "phase-badge phase-work";
         phaseBadge.innerText = "Work Phase";
         exTitle.innerText = currentEx.name;
         muscleLabel.innerText = "Target: " + (currentEx.muscle ? currentEx.muscle.toUpperCase() : "UPPER BODY");
+        artImg.src = artAssets[artKey] || artAssets.biceps;
       } else {
         phaseBadge.className = "phase-badge phase-rest";
         phaseBadge.innerText = "Rest Phase";
         exTitle.innerText = "Rest & Prepare";
         var nextEx = exercises[(currentExerciseIndex + 1) % exercises.length];
+        var nextArtKey = nextEx ? nextEx.artKey : 'biceps';
         muscleLabel.innerText = "Next up: " + (nextEx ? nextEx.name : "Finish");
+        artImg.src = artAssets[nextArtKey] || artAssets.biceps;
       }
     }
 
@@ -711,13 +558,13 @@
       if (!name) return;
 
       var muscleSelect = document.getElementById('newExMuscle').value;
-      var typeSelect = document.getElementById('newExType').value;
+      var artSelect = document.getElementById('newExArt').value;
 
       exercises.push({
         id: Date.now(),
         name: name,
         muscle: muscleSelect,
-        type: typeSelect
+        artKey: artSelect
       });
 
       nameInput.value = '';
@@ -740,9 +587,8 @@
       saveExercises();
     }
 
-    // Initialize Canvas Loop & App State
+    // Initialize App State
     resetWorkout();
-    animateLoop();
   </script>
 </body>
 </html>
