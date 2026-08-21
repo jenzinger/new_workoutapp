@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Dumbbell Workout Timer</title>
+  <title>Dumbbell Workout Timer - Dynamic Edition</title>
 
   <!-- iOS PWA Metadata -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -251,12 +251,12 @@
         <img id="exerciseArt" src="" alt="Exercise Frame" onerror="handleImageError(this)">
       </div>
       <div id="phaseBadge" class="phase-badge phase-work">Ready</div>
-      <div class="exercise-title" id="exerciseName">Bicep Curl</div>
+      <div class="exercise-title" id="exerciseName">Loading...</div>
     </div>
 
     <div class="timer-display">
       <div class="time-left" id="timer">00:30</div>
-      <div class="rounds-count" id="roundDisplay">Exercise 1 of 3</div>
+      <div class="rounds-count" id="roundDisplay">Exercise 1 of 1</div>
     </div>
 
     <div class="controls-card">
@@ -292,32 +292,11 @@
   </div>
 
   <script>
-    // Correct base URL pointing to master branch with matching exercise paths
-    const RAW_BASE = "https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/master/exercises/";
+    const CDN_BASE = "https://cdn.jsdelivr.net/gh/hasaneyldrm/exercises-dataset@main/";
+    const JSON_URL = `${CDN_BASE}data/exercises.json`;
 
-    // Correct exact folder names matching the repository structure
-    const dataset = [
-      { name: "Bicep Curl", path: "bicep-curl" },
-      { name: "Barbell Bench Press", path: "barbell-bench-press" },
-      { name: "Dumbbell Shoulder Press", path: "dumbbell-shoulder-press" },
-      { name: "Triceps Dip", path: "triceps-dip" },
-      { name: "Lat Pulldown", path: "lat-pulldown" },
-      { name: "Bent Over Row", path: "bent-over-row" },
-      { name: "Bodyweight Squat", path: "bodyweight-squat" },
-      { name: "Dumbbell Lunge", path: "dumbbell-lunge" },
-      { name: "Push-Up", path: "push-up" }
-    ];
-
-    let exercises = [
-      { id: 1, name: "Bicep Curl", path: "bicep-curl" },
-      { id: 2, name: "Dumbbell Shoulder Press", path: "dumbbell-shoulder-press" },
-      { id: 3, name: "Barbell Bench Press", path: "barbell-bench-press" }
-    ];
-
-    try {
-      const saved = localStorage.getItem('cdn_dumbbell_timer_routine');
-      if (saved) exercises = JSON.parse(saved);
-    } catch (e) {}
+    let dataset = [];
+    let exercises = [];
 
     let currentExerciseIndex = 0;
     let isWorkPhase = true;
@@ -327,12 +306,43 @@
     let animationInterval = null;
     let isFrameOne = false;
 
-    function getImageUrl(folderPath, frame) {
-      return `${RAW_BASE}${folderPath}/images/${frame}.png`;
+    async function initApp() {
+      try {
+        const response = await fetch(JSON_URL);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        
+        const rawData = await response.json();
+        
+        // Normalize dataset structure
+        dataset = rawData.map(item => ({
+          name: item.name || item.title || "Exercise",
+          image: item.image || (item.images && item.images[0]) || "",
+          images: item.images || [item.image]
+        })).filter(item => item.image);
+
+        // Load routine from localStorage or pick initial presets
+        const saved = localStorage.getItem('dynamic_timer_routine');
+        if (saved) {
+          exercises = JSON.parse(saved);
+        } else if (dataset.length > 0) {
+          exercises = dataset.slice(0, 3);
+        }
+
+        resetWorkout();
+      } catch (err) {
+        console.error("Dataset fetch failed:", err);
+        document.getElementById('exerciseName').innerText = "Failed to load dataset";
+      }
+    }
+
+    function getImageUrl(item, frameIdx) {
+      if (!item) return '';
+      let imgPath = item.images && item.images[frameIdx] ? item.images[frameIdx] : item.image;
+      if (imgPath.startsWith('http')) return imgPath;
+      return `${CDN_BASE}${imgPath}`;
     }
 
     function handleImageError(imgEl) {
-      // Fallback placeholder image if network fails
       imgEl.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='280' height='280' viewBox='0 0 280 280'><rect width='280' height='280' fill='%231c1c1e'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%238e8e93' font-family='sans-serif' font-size='14'>Image Unavailable</text></svg>";
     }
 
@@ -355,8 +365,10 @@
     function updateArtDisplay() {
       const artImg = document.getElementById('exerciseArt');
       const currentEx = exercises[currentExerciseIndex] || dataset[0];
-      const frame = isFrameOne ? 1 : 0;
-      artImg.src = getImageUrl(currentEx.path, frame);
+      const frameIdx = isFrameOne ? 1 : 0;
+      if (currentEx) {
+        artImg.src = getImageUrl(currentEx, frameIdx);
+      }
     }
 
     function filterDataset() {
@@ -366,7 +378,7 @@
 
       if (!query) return;
 
-      const filtered = dataset.filter(ex => ex.name.toLowerCase().includes(query));
+      const filtered = dataset.filter(ex => ex.name.toLowerCase().includes(query)).slice(0, 15);
       filtered.forEach(ex => {
         const item = document.createElement('div');
         item.className = 'search-item';
@@ -380,7 +392,8 @@
       exercises.push({
         id: Date.now(),
         name: ex.name,
-        path: ex.path
+        image: ex.image,
+        images: ex.images
       });
       document.getElementById('searchInput').value = '';
       document.getElementById('searchResults').innerHTML = '';
@@ -389,7 +402,7 @@
 
     function saveExercises() {
       try {
-        localStorage.setItem('cdn_dumbbell_timer_routine', JSON.stringify(exercises));
+        localStorage.setItem('dynamic_timer_routine', JSON.stringify(exercises));
       } catch (e) {}
       renderManagerList();
       if (!isRunning) resetWorkout();
@@ -474,6 +487,7 @@
     }
 
     function updateDisplay() {
+      if (exercises.length === 0) return;
       const currentEx = exercises[currentExerciseIndex] || dataset[0];
       const mins = String(Math.floor(timeRemaining / 60)).padStart(2, '0');
       const secs = String(timeRemaining % 60).padStart(2, '0');
@@ -485,7 +499,7 @@
       if (isWorkPhase) {
         phaseBadge.className = "phase-badge phase-work";
         phaseBadge.innerText = "Work";
-        document.getElementById('exerciseName').innerText = currentEx.name;
+        document.getElementById('exerciseName').innerText = currentEx ? currentEx.name : "";
       } else {
         phaseBadge.className = "phase-badge phase-rest";
         phaseBadge.innerText = "Rest";
@@ -543,7 +557,7 @@
       saveExercises();
     }
 
-    resetWorkout();
+    document.addEventListener('DOMContentLoaded', initApp);
   </script>
 </body>
 </html>
