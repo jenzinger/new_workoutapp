@@ -3,12 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Dumbbell Workout Timer 3D</title>
-
-  <!-- iOS PWA Metadata -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Dumbbell Timer">
+  <title>Dumbbell Workout Timer - Dataset Edition</title>
 
   <style>
     :root {
@@ -23,19 +18,12 @@
       --border-color: #2c2c2e;
     }
 
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
       background-color: var(--bg-color);
       color: var(--text-color);
-      padding-top: env(safe-area-inset-top);
-      padding-bottom: env(safe-area-inset-bottom);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -50,11 +38,7 @@
       border-bottom: 0.5px solid var(--border-color);
     }
 
-    header h1 {
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-    }
+    header h1 { font-size: 20px; font-weight: 700; }
 
     .nav-btn {
       background: none;
@@ -65,12 +49,7 @@
       cursor: pointer;
     }
 
-    .view {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      justify-content: space-between;
-    }
+    .view { display: flex; flex-direction: column; flex: 1; justify-content: space-between; }
 
     .diagram-container {
       display: flex;
@@ -90,7 +69,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      position: relative;
       overflow: hidden;
       padding: 12px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
@@ -101,25 +79,9 @@
       height: 100%;
       object-fit: contain;
       border-radius: 16px;
-      transition: opacity 0.2s ease-in-out;
     }
 
-    .exercise-title {
-      font-size: 26px;
-      font-weight: 700;
-      margin-top: 16px;
-      text-align: center;
-      letter-spacing: -0.5px;
-    }
-
-    .muscle-label {
-      font-size: 12px;
-      color: var(--subtext-color);
-      text-transform: uppercase;
-      letter-spacing: 1.2px;
-      margin-top: 4px;
-      font-weight: 600;
-    }
+    .exercise-title { font-size: 24px; font-weight: 700; margin-top: 16px; text-align: center; }
 
     .phase-badge {
       display: inline-block;
@@ -129,29 +91,14 @@
       font-weight: 700;
       text-transform: uppercase;
       margin-top: 10px;
-      letter-spacing: 0.5px;
     }
 
     .phase-work { background-color: rgba(48, 209, 88, 0.15); color: var(--accent-work); border: 1px solid var(--accent-work); }
     .phase-rest { background-color: rgba(10, 132, 255, 0.15); color: var(--accent-rest); border: 1px solid var(--accent-rest); }
 
     .timer-display { text-align: center; margin: 8px 0; }
-
-    .time-left {
-      font-size: 76px;
-      font-weight: 800;
-      font-variant-numeric: tabular-nums;
-      line-height: 1;
-      letter-spacing: -2px;
-    }
-
-    .rounds-count {
-      font-size: 14px;
-      color: var(--subtext-color);
-      margin-top: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-    }
+    .time-left { font-size: 76px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; }
+    .rounds-count { font-size: 14px; color: var(--subtext-color); margin-top: 6px; text-transform: uppercase; }
 
     .controls-card {
       background-color: var(--card-bg);
@@ -159,26 +106,6 @@
       border-top-left-radius: 32px;
       border-top-right-radius: 32px;
       padding: 20px 24px 32px;
-    }
-
-    .setting-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .setting-row label { font-size: 15px; color: var(--subtext-color); }
-
-    .setting-row input {
-      width: 70px;
-      background: var(--card-inner);
-      border: 1px solid var(--border-color);
-      color: #fff;
-      padding: 8px 10px;
-      border-radius: 10px;
-      font-size: 16px;
-      text-align: center;
     }
 
     .btn-group { display: flex; gap: 12px; margin-top: 10px; }
@@ -196,41 +123,42 @@
     .btn-start { background-color: var(--accent-work); color: #000; }
     .btn-pause { background-color: #ff9f0a; color: #000; }
     .btn-reset { background-color: var(--card-inner); color: var(--danger-color); border: 1px solid var(--border-color); }
-    .btn-add { background-color: var(--accent-rest); color: #fff; border-radius: 10px; padding: 12px; }
 
-    .manager-content {
-      padding: 20px;
-      flex: 1;
-      overflow-y: auto;
-    }
+    .manager-content { padding: 20px; flex: 1; overflow-y: auto; }
 
-    .add-form {
-      background-color: var(--card-bg);
-      border: 1px solid var(--border-color);
-      padding: 16px;
-      border-radius: 16px;
-      margin-bottom: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .add-form input, .add-form select {
+    .search-box {
+      width: 100%;
       background: var(--card-inner);
       border: 1px solid var(--border-color);
       color: #fff;
-      padding: 12px;
-      border-radius: 10px;
-      font-size: 15px;
-      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 16px;
+      margin-bottom: 12px;
     }
 
-    .ex-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+    .search-results {
+      max-height: 180px;
+      overflow-y: auto;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      margin-bottom: 20px;
     }
+
+    .search-item {
+      padding: 12px 16px;
+      border-bottom: 0.5px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .search-item:last-child { border-bottom: none; }
+    .search-item:hover { background-color: var(--card-inner); }
+
+    .ex-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
 
     .ex-item {
       background-color: var(--card-bg);
@@ -242,20 +170,7 @@
       align-items: center;
     }
 
-    .ex-info { display: flex; flex-direction: column; }
-    .ex-name { font-size: 16px; font-weight: 600; }
-    .ex-target { font-size: 11px; color: var(--subtext-color); text-transform: uppercase; margin-top: 2px; letter-spacing: 0.5px; }
-    .ex-actions { display: flex; align-items: center; gap: 8px; }
-
-    .icon-btn {
-      background: none;
-      border: none;
-      color: var(--subtext-color);
-      font-size: 18px;
-      padding: 6px;
-      cursor: pointer;
-    }
-
+    .icon-btn { background: none; border: none; color: var(--subtext-color); font-size: 18px; padding: 6px; cursor: pointer; }
     .icon-btn.delete { color: var(--danger-color); }
     .hidden { display: none !important; }
   </style>
@@ -263,20 +178,17 @@
 <body>
 
   <header>
-    <h1 id="headerTitle">Dumbbell Timer 3D</h1>
-    <button class="nav-btn" id="toggleViewBtn" onclick="toggleView()">Manage Exercises</button>
+    <h1 id="headerTitle">Workout Timer</h1>
+    <button class="nav-btn" id="toggleViewBtn" onclick="toggleView()">Search Dataset</button>
   </header>
 
   <div id="timerView" class="view">
     <div class="diagram-container">
       <div class="anatomy-card">
-        <!-- Self-Contained High Definition Render -->
-        <img id="exerciseArt" src="" alt="3D Exercise Anatomical Render">
+        <img id="exerciseArt" src="" alt="Exercise Frame">
       </div>
-
       <div id="phaseBadge" class="phase-badge phase-work">Ready</div>
-      <div class="exercise-title" id="exerciseName">Dumbbell Curls</div>
-      <div class="muscle-label" id="muscleLabel">Target: BICEPS</div>
+      <div class="exercise-title" id="exerciseName">Biceps Curl</div>
     </div>
 
     <div class="timer-display">
@@ -285,17 +197,6 @@
     </div>
 
     <div class="controls-card">
-      <div id="setupForm">
-        <div class="setting-row">
-          <label for="workTime">Work Duration (s)</label>
-          <input type="number" id="workTime" value="30" min="5">
-        </div>
-        <div class="setting-row">
-          <label for="restTime">Pause Duration (s)</label>
-          <input type="number" id="restTime" value="10" min="5">
-        </div>
-      </div>
-
       <div class="btn-group">
         <button class="btn btn-start" id="startBtn" onclick="toggleTimer()">Start</button>
         <button class="btn btn-reset hidden" id="resetBtn" onclick="resetWorkout()">Reset</button>
@@ -305,109 +206,60 @@
 
   <div id="managerView" class="view hidden">
     <div class="manager-content">
-      <div class="add-form">
-        <h3>Add Dumbbell Exercise</h3>
-        
-        <input type="text" id="newExName" list="exercisePresets" placeholder="Type or select exercise" oninput="autoDetectConfig()">
-        
-        <datalist id="exercisePresets">
-          <option value="Dumbbell Curls">
-          <option value="Hammer Curls">
-          <option value="Tricep Extensions">
-          <option value="Tricep Kickbacks">
-          <option value="Dumbbell Bench Press">
-          <option value="Chest Flyes">
-          <option value="Single-Arm Rows">
-          <option value="Bent-Over Rows">
-        </datalist>
-
-        <select id="newExMuscle">
-          <option value="biceps">Biceps (Arms)</option>
-          <option value="triceps">Triceps (Arms)</option>
-          <option value="chest">Chest (Pectorals)</option>
-          <option value="back">Back (Lats &amp; Traps)</option>
-        </select>
-
-        <select id="newExArt">
-          <option value="biceps">3D Bicep Render</option>
-          <option value="triceps">3D Tricep Render</option>
-          <option value="chest">3D Chest Render</option>
-          <option value="back">3D Back Render</option>
-        </select>
-
-        <button class="btn btn-add" onclick="addExercise()">Add to Routine</button>
-      </div>
-
-      <h3>Current Routine &amp; Order</h3>
+      <h3>Search Dataset Exercises</h3>
       <br>
+      <input type="text" id="searchInput" class="search-box" placeholder="Type exercise name (e.g. Curl, Bench, Squat)..." oninput="filterDataset()">
+      
+      <div class="search-results" id="searchResults"></div>
+
+      <h3>Your Active Routine</h3>
       <ul class="ex-list" id="exerciseList"></ul>
     </div>
   </div>
 
   <script>
-    /* EMBEDDED HIGH-DEFINITION RENDER DATA (Base64 Inline Data URIs - 100% Offline) */
-    var renderAssets = {
-      biceps: {
-        start: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><defs><radialGradient id="bg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="%231a1a1e"/><stop offset="100%" stop-color="%230a0a0c"/></radialGradient><linearGradient id="muscle" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2330d158"/><stop offset="100%" stop-color="%231b8a37"/></linearGradient><linearGradient id="body" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2348484a"/><stop offset="100%" stop-color="%232c2c2e"/></linearGradient><linearGradient id="db" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="%23a2a2a7"/><stop offset="100%" stop-color="%23636366"/></linearGradient></defs><rect width="300" height="300" rx="24" fill="url(%23bg)"/><circle cx="150" cy="55" r="22" fill="url(%23body)"/><path d="M125 80 C110 100 110 140 115 200 L185 200 C190 140 190 100 175 80 Z" fill="url(%23body)"/><path d="M115 88 C95 105 85 140 92 185 L72 185 L62 105 C75 90 95 82 115 88 Z" fill="url(%23body)"/><path d="M185 88 C205 105 215 140 208 185 L228 185 L238 105 C225 90 205 82 185 88 Z" fill="url(%23body)"/><path d="M98 115 C88 128 88 152 98 165 C108 152 108 128 98 115 Z" fill="url(%23muscle)"/><path d="M202 115 C192 128 192 152 202 165 C212 152 212 128 202 115 Z" fill="url(%23muscle)"/><rect x="52" y="178" width="40" height="20" rx="6" fill="url(%23db)"/><rect x="208" y="178" width="40" height="20" rx="6" fill="url(%23db)"/></svg>',
-        end: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><defs><radialGradient id="bg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="%231a1a1e"/><stop offset="100%" stop-color="%230a0a0c"/></radialGradient><linearGradient id="muscle" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2330d158"/><stop offset="100%" stop-color="%2328cd41"/></linearGradient><linearGradient id="body" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2348484a"/><stop offset="100%" stop-color="%232c2c2e"/></linearGradient><linearGradient id="db" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="%23a2a2a7"/><stop offset="100%" stop-color="%23636366"/></linearGradient></defs><rect width="300" height="300" rx="24" fill="url(%23bg)"/><circle cx="150" cy="55" r="22" fill="url(%23body)"/><path d="M125 80 C110 100 110 140 115 200 L185 200 C190 140 190 100 175 80 Z" fill="url(%23body)"/><path d="M115 88 C95 100 82 110 75 125 L92 138 C105 120 112 108 118 100 Z" fill="url(%23body)"/><path d="M185 88 C205 100 218 110 225 125 L208 138 C195 120 188 108 182 100 Z" fill="url(%23body)"/><path d="M102 102 C88 112 88 126 100 134 C112 124 110 108 102 102 Z" fill="url(%23muscle)"/><path d="M198 102 C186 108 184 124 196 134 C208 126 208 112 198 102 Z" fill="url(%23muscle)"/><rect x="58" y="112" width="30" height="30" rx="8" fill="url(%23db)"/><rect x="212" y="112" width="30" height="30" rx="8" fill="url(%23db)"/></svg>'
-      },
-      triceps: {
-        start: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><defs><radialGradient id="bg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="%231a1a1e"/><stop offset="100%" stop-color="%230a0a0c"/></radialGradient><linearGradient id="muscle" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2330d158"/><stop offset="100%" stop-color="%231b8a37"/></linearGradient><linearGradient id="body" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2348484a"/><stop offset="100%" stop-color="%232c2c2e"/></linearGradient><linearGradient id="db" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="%23a2a2a7"/><stop offset="100%" stop-color="%23636366"/></linearGradient></defs><rect width="300" height="300" rx="24" fill="url(%23bg)"/><circle cx="150" cy="110" r="22" fill="url(%23body)"/><path d="M125 135 L120 230 L180 230 L175 135 Z" fill="url(%23body)"/><path d="M125 135 C118 95 125 65 130 45 L145 45 C138 65 135 95 132 135 Z" fill="url(%23body)"/><path d="M175 135 C182 95 175 65 170 45 L155 45 C162 65 165 95 168 135 Z" fill="url(%23body)"/><path d="M122 68 C112 85 116 110 128 128 C128 105 128 80 122 68 Z" fill="url(%23muscle)"/><path d="M178 68 C188 85 184 110 172 128 C172 105 172 80 178 68 Z" fill="url(%23muscle)"/><rect x="98" y="78" width="34" height="22" rx="6" fill="url(%23db)"/><rect x="168" y="78" width="34" height="22" rx="6" fill="url(%23db)"/></svg>',
-        end: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><defs><radialGradient id="bg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="%231a1a1e"/><stop offset="100%" stop-color="%230a0a0c"/></radialGradient><linearGradient id="muscle" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2330d158"/><stop offset="100%" stop-color="%2328cd41"/></linearGradient><linearGradient id="body" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2348484a"/><stop offset="100%" stop-color="%232c2c2e"/></linearGradient><linearGradient id="db" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="%23a2a2a7"/><stop offset="100%" stop-color="%23636366"/></linearGradient></defs><rect width="300" height="300" rx="24" fill="url(%23bg)"/><circle cx="150" cy="110" r="22" fill="url(%23body)"/><path d="M125 135 L120 230 L180 230 L175 135 Z" fill="url(%23body)"/><path d="M125 135 C120 95 126 65 132 25 L145 25 C139 65 135 95 132 135 Z" fill="url(%23body)"/><path d="M175 135 C180 95 174 65 168 25 L155 25 C161 65 165 95 168 135 Z" fill="url(%23body)"/><path d="M122 60 C116 80 120 108 130 128 C128 105 128 80 122 60 Z" fill="url(%23muscle)"/><path d="M178 60 C184 80 180 108 170 128 C172 105 172 80 178 60 Z" fill="url(%23muscle)"/><rect x="126" y="10" width="48" height="24" rx="6" fill="url(%23db)"/></svg>'
-      },
-      chest: {
-        start: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><defs><radialGradient id="bg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="%231a1a1e"/><stop offset="100%" stop-color="%230a0a0c"/></radialGradient><linearGradient id="muscle" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2330d158"/><stop offset="100%" stop-color="%231b8a37"/></linearGradient><linearGradient id="body" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2348484a"/><stop offset="100%" stop-color="%232c2c2e"/></linearGradient><linearGradient id="db" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="%23a2a2a7"/><stop offset="100%" stop-color="%23636366"/></linearGradient></defs><rect width="300" height="300" rx="24" fill="url(%23bg)"/><rect x="40" y="180" width="220" height="18" rx="8" fill="url(%23body)"/><rect x="70" y="198" width="18" height="50" fill="url(%23body)"/><rect x="212" y="198" width="18" height="50" fill="url(%23body)"/><circle cx="80" cy="162" r="22" fill="url(%23body)"/><path d="M102 155 L225 155 L210 180 L102 180 Z" fill="url(%23body)"/><path d="M125 155 C125 130 138 118 115 112 L98 136 Z" fill="url(%23body)"/><path d="M160 155 C160 130 147 118 170 112 L187 136 Z" fill="url(%23body)"/><path d="M118 155 C130 142 142 142 142 155 Z" fill="url(%23muscle)"/><path d="M167 155 C155 142 143 142 143 155 Z" fill="url(%23muscle)"/><rect x="80" y="100" width="36" height="20" rx="6" fill="url(%23db)"/><rect x="169" y="100" width="36" height="20" rx="6" fill="url(%23db)"/></svg>',
-        end: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><defs><radialGradient id="bg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="%231a1a1e"/><stop offset="100%" stop-color="%230a0a0c"/></radialGradient><linearGradient id="muscle" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2330d158"/><stop offset="100%" stop-color="%2328cd41"/></linearGradient><linearGradient id="body" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2348484a"/><stop offset="100%" stop-color="%232c2c2e"/></linearGradient><linearGradient id="db" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="%23a2a2a7"/><stop offset="100%" stop-color="%23636366"/></linearGradient></defs><rect width="300" height="300" rx="24" fill="url(%23bg)"/><rect x="40" y="180" width="220" height="18" rx="8" fill="url(%23body)"/><rect x="70" y="198" width="18" height="50" fill="url(%23body)"/><rect x="212" y="198" width="18" height="50" fill="url(%23body)"/><circle cx="80" cy="162" r="22" fill="url(%23body)"/><path d="M102 155 L225 155 L210 180 L102 180 Z" fill="url(%23body)"/><path d="M125 155 C125 120 132 90 126 60 L138 60 C144 90 138 120 132 155 Z" fill="url(%23body)"/><path d="M160 155 C160 120 153 90 159 60 L147 60 C141 90 147 120 153 155 Z" fill="url(%23body)"/><path d="M118 155 C130 138 142 138 142 155 Z" fill="url(%23muscle)"/><path d="M167 155 C155 138 143 138 143 155 Z" fill="url(%23muscle)"/><rect x="118" y="42" width="58" height="22" rx="6" fill="url(%23db)"/></svg>'
-      },
-      back: {
-        start: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><defs><radialGradient id="bg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="%231a1a1e"/><stop offset="100%" stop-color="%230a0a0c"/></radialGradient><linearGradient id="muscle" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2330d158"/><stop offset="100%" stop-color="%231b8a37"/></linearGradient><linearGradient id="body" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2348484a"/><stop offset="100%" stop-color="%232c2c2e"/></linearGradient><linearGradient id="db" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="%23a2a2a7"/><stop offset="100%" stop-color="%23636366"/></linearGradient></defs><rect width="300" height="300" rx="24" fill="url(%23bg)"/><rect x="60" y="210" width="180" height="15" rx="6" fill="url(%23body)"/><rect x="90" y="225" width="15" height="40" fill="url(%23body)"/><circle cx="216" cy="108" r="22" fill="url(%23body)"/><path d="M198 120 L120 150 L96 210 L126 210 L144 168 L192 138 Z" fill="url(%23body)"/><path d="M168 132 C150 144 138 168 132 210 L150 210 C156 174 168 156 180 138 Z" fill="url(%23body)"/><path d="M162 132 C144 138 126 138 144 156 Z" fill="url(%23muscle)"/><rect x="114" y="198" width="36" height="24" rx="6" fill="url(%23db)"/></svg>',
-        end: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><defs><radialGradient id="bg" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="%231a1a1e"/><stop offset="100%" stop-color="%230a0a0c"/></radialGradient><linearGradient id="muscle" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2330d158"/><stop offset="100%" stop-color="%2328cd41"/></linearGradient><linearGradient id="body" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2348484a"/><stop offset="100%" stop-color="%232c2c2e"/></linearGradient><linearGradient id="db" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="%23a2a2a7"/><stop offset="100%" stop-color="%23636366"/></linearGradient></defs><rect width="300" height="300" rx="24" fill="url(%23bg)"/><rect x="60" y="210" width="180" height="15" rx="6" fill="url(%23body)"/><rect x="90" y="225" width="15" height="40" fill="url(%23body)"/><circle cx="216" cy="108" r="22" fill="url(%23body)"/><path d="M198 120 L120 150 L96 210 L126 210 L144 168 L192 138 Z" fill="url(%23body)"/><path d="M168 132 C156 126 144 114 138 102 L156 102 C162 114 168 120 174 126 Z" fill="url(%23body)"/><path d="M162 132 C144 138 126 132 144 120 Z" fill="url(%23muscle)"/><rect x="126" y="90" width="36" height="24" rx="6" fill="url(%23db)"/></svg>'
-      }
-    };
+    const RAW_BASE = "https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/exercises/";
 
-    var exerciseLibrary = {
-      "dumbbell curls": { muscle: "biceps", artKey: "biceps" },
-      "bicep curls": { muscle: "biceps", artKey: "biceps" },
-      "tricep extensions": { muscle: "triceps", artKey: "triceps" },
-      "triceps extension": { muscle: "triceps", artKey: "triceps" },
-      "dumbbell bench press": { muscle: "chest", artKey: "chest" },
-      "chest press": { muscle: "chest", artKey: "chest" },
-      "single-arm rows": { muscle: "back", artKey: "back" }
-    };
-
-    var defaultExercises = [
-      { id: 1, name: "Dumbbell Curls", muscle: "biceps", artKey: "biceps" },
-      { id: 2, name: "Tricep Extensions", muscle: "triceps", artKey: "triceps" },
-      { id: 3, name: "Dumbbell Bench Press", muscle: "chest", artKey: "chest" },
-      { id: 4, name: "Single-Arm Rows", muscle: "back", artKey: "back" }
+    // Popular exercise presets mapped to GitHub directory folder names
+    const dataset = [
+      { name: "Biceps Curl", path: "Biceps_Curl" },
+      { name: "Barbell Bench Press", path: "Barbell_Bench_Press" },
+      { name: "Dumbbell Shoulder Press", path: "Dumbbell_Shoulder_Press" },
+      { name: "Tricep Dumbbell Extension", path: "Tricep_Dumbbell_Extension" },
+      { name: "Lat Pulldown", path: "Lat_Pulldown" },
+      { name: "Bent Over Row", path: "Bent_Over_Row" },
+      { name: "Bodyweight Squat", path: "Bodyweight_Squat" },
+      { name: "Dumbbell Lunge", path: "Dumbbell_Lunge" },
+      { name: "Push Up", path: "Push_Up" }
     ];
 
-    var exercises = defaultExercises;
-    try {
-      var saved = localStorage.getItem('ios_dumbbell_timer_offline');
-      if (saved) exercises = JSON.parse(saved);
-    } catch (e) {
-      exercises = defaultExercises;
-    }
+    let exercises = [
+      { name: "Biceps Curl", path: "Biceps_Curl" },
+      { name: "Barbell Bench Press", path: "Barbell_Bench_Press" }
+    ];
 
-    var currentExerciseIndex = 0;
-    var isWorkPhase = true;
-    var isRunning = false;
-    var timeRemaining = 0;
-    var timerInterval = null;
-    var animationInterval = null;
-    var isEndPosition = false;
+    let currentExerciseIndex = 0;
+    let isWorkPhase = true;
+    let isRunning = false;
+    let timeRemaining = 30;
+    let timerInterval = null;
+    let animationInterval = null;
+    let isFrameOne = false;
+
+    function getImageUrl(folderPath, frame) {
+      return `${RAW_BASE}${folderPath}/images/${frame}.png`;
+    }
 
     function startAnimation() {
       stopAnimation();
-      animationInterval = setInterval(function() {
+      animationInterval = setInterval(() => {
         if (isRunning && isWorkPhase) {
-          isEndPosition = !isEndPosition;
+          isFrameOne = !isFrameOne;
         } else {
-          isEndPosition = false;
+          isFrameOne = false;
         }
         updateArtDisplay();
-      }, 1200);
+      }, 1000);
     }
 
     function stopAnimation() {
@@ -415,65 +267,57 @@
     }
 
     function updateArtDisplay() {
-      var artImg = document.getElementById('exerciseArt');
-      var currentEx = exercises[currentExerciseIndex] || defaultExercises[0];
-      var artKey = currentEx.artKey || 'biceps';
-      var set = renderAssets[artKey] || renderAssets.biceps;
-
-      if (!isWorkPhase) {
-        var nextEx = exercises[(currentExerciseIndex + 1) % exercises.length];
-        var nextArtKey = nextEx ? nextEx.artKey : 'biceps';
-        set = renderAssets[nextArtKey] || renderAssets.biceps;
-        artImg.src = set.start;
-      } else {
-        artImg.src = isEndPosition ? set.end : set.start;
-      }
+      const artImg = document.getElementById('exerciseArt');
+      const currentEx = exercises[currentExerciseIndex] || dataset[0];
+      const frame = isFrameOne ? 1 : 0;
+      artImg.src = getImageUrl(currentEx.path, frame);
     }
 
-    function autoDetectConfig() {
-      var nameVal = document.getElementById('newExName').value.trim().toLowerCase();
-      if (exerciseLibrary[nameVal]) {
-        var match = exerciseLibrary[nameVal];
-        document.getElementById('newExMuscle').value = match.muscle;
-        document.getElementById('newExArt').value = match.artKey;
-      }
+    function filterDataset() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const resultsContainer = document.getElementById('searchResults');
+      resultsContainer.innerHTML = '';
+
+      if (!query) return;
+
+      const filtered = dataset.filter(ex => ex.name.toLowerCase().includes(query));
+      filtered.forEach(ex => {
+        const item = document.createElement('div');
+        item.className = 'search-item';
+        item.innerHTML = `<span>${ex.name}</span><button class="nav-btn">+ Add</button>`;
+        item.onclick = () => addFromDataset(ex);
+        resultsContainer.appendChild(item);
+      });
     }
 
-    function saveExercises() {
-      try {
-        localStorage.setItem('ios_dumbbell_timer_offline', JSON.stringify(exercises));
-      } catch (e) {}
+    function addFromDataset(ex) {
+      exercises.push(ex);
+      document.getElementById('searchInput').value = '';
+      document.getElementById('searchResults').innerHTML = '';
       renderManagerList();
-      if (!isRunning) resetWorkout();
     }
 
     function toggleView() {
-      var timerView = document.getElementById('timerView');
-      var managerView = document.getElementById('managerView');
-      var toggleBtn = document.getElementById('toggleViewBtn');
-      var title = document.getElementById('headerTitle');
+      const timerView = document.getElementById('timerView');
+      const managerView = document.getElementById('managerView');
+      const toggleBtn = document.getElementById('toggleViewBtn');
 
       if (managerView.classList.contains('hidden')) {
         pauseWorkout();
         timerView.classList.add('hidden');
         managerView.classList.remove('hidden');
         toggleBtn.innerText = "Done";
-        title.innerText = "Edit Routine";
         renderManagerList();
       } else {
         managerView.classList.add('hidden');
         timerView.classList.remove('hidden');
-        toggleBtn.innerText = "Manage Exercises";
-        title.innerText = "Dumbbell Timer 3D";
+        toggleBtn.innerText = "Search Dataset";
         resetWorkout();
       }
     }
 
     function toggleTimer() {
-      if (!exercises || exercises.length === 0) {
-        alert("Please add at least one exercise first.");
-        return;
-      }
+      if (exercises.length === 0) return alert("Please add an exercise first.");
       if (!isRunning) startWorkout();
       else pauseWorkout();
     }
@@ -483,22 +327,12 @@
       document.getElementById('startBtn').innerText = "Pause";
       document.getElementById('startBtn').className = "btn btn-pause";
       document.getElementById('resetBtn').classList.remove('hidden');
-      document.getElementById('setupForm').classList.add('hidden');
 
-      if (timeRemaining === 0) {
-        timeRemaining = parseInt(document.getElementById('workTime').value) || 30;
-      }
-
-      updateDisplay();
       startAnimation();
-
-      timerInterval = setInterval(function() {
+      timerInterval = setInterval(() => {
         timeRemaining--;
-        if (timeRemaining < 0) {
-          switchPhase();
-        } else {
-          updateDisplay();
-        }
+        if (timeRemaining < 0) switchPhase();
+        else updateDisplay();
       }, 1000);
     }
 
@@ -507,52 +341,40 @@
       clearInterval(timerInterval);
       document.getElementById('startBtn').innerText = "Resume";
       document.getElementById('startBtn').className = "btn btn-start";
-      isEndPosition = false;
       updateDisplay();
     }
 
     function switchPhase() {
-      var workSecs = parseInt(document.getElementById('workTime').value) || 30;
-      var restSecs = parseInt(document.getElementById('restTime').value) || 10;
-
       if (isWorkPhase) {
         isWorkPhase = false;
-        timeRemaining = restSecs;
+        timeRemaining = 10;
       } else {
         isWorkPhase = true;
-        currentExerciseIndex++;
-        if (currentExerciseIndex >= exercises.length) {
-          currentExerciseIndex = 0;
-        }
-        timeRemaining = workSecs;
+        currentExerciseIndex = (currentExerciseIndex + 1) % exercises.length;
+        timeRemaining = 30;
       }
-
-      isEndPosition = false;
+      isFrameOne = false;
       updateDisplay();
     }
 
     function updateDisplay() {
-      var currentEx = exercises[currentExerciseIndex] || defaultExercises[0];
-      document.getElementById('timer').innerText = formatTime(timeRemaining);
-      document.getElementById('roundDisplay').innerText = "Exercise " + (currentExerciseIndex + 1) + " of " + exercises.length;
+      const currentEx = exercises[currentExerciseIndex] || dataset[0];
+      const mins = String(Math.floor(timeRemaining / 60)).padStart(2, '0');
+      const secs = String(timeRemaining % 60).padStart(2, '0');
+      
+      document.getElementById('timer').innerText = `${mins}:${secs}`;
+      document.getElementById('roundDisplay').innerText = `Exercise ${currentExerciseIndex + 1} of ${exercises.length}`;
 
-      var phaseBadge = document.getElementById('phaseBadge');
-      var exTitle = document.getElementById('exerciseName');
-      var muscleLabel = document.getElementById('muscleLabel');
-
+      const phaseBadge = document.getElementById('phaseBadge');
       if (isWorkPhase) {
         phaseBadge.className = "phase-badge phase-work";
-        phaseBadge.innerText = "Work Phase";
-        exTitle.innerText = currentEx.name;
-        muscleLabel.innerText = "Target: " + (currentEx.muscle ? currentEx.muscle.toUpperCase() : "UPPER BODY");
+        phaseBadge.innerText = "Work";
+        document.getElementById('exerciseName').innerText = currentEx.name;
       } else {
         phaseBadge.className = "phase-badge phase-rest";
-        phaseBadge.innerText = "Rest Phase";
-        exTitle.innerText = "Rest & Prepare";
-        var nextEx = exercises[(currentExerciseIndex + 1) % exercises.length];
-        muscleLabel.innerText = "Next up: " + (nextEx ? nextEx.name : "Finish");
+        phaseBadge.innerText = "Rest";
+        document.getElementById('exerciseName').innerText = "Rest Phase";
       }
-
       updateArtDisplay();
     }
 
@@ -561,83 +383,33 @@
       stopAnimation();
       isRunning = false;
       isWorkPhase = true;
-      isEndPosition = false;
+      isFrameOne = false;
       currentExerciseIndex = 0;
-      timeRemaining = parseInt(document.getElementById('workTime').value) || 30;
+      timeRemaining = 30;
 
       document.getElementById('startBtn').innerText = "Start";
       document.getElementById('startBtn').className = "btn btn-start";
       document.getElementById('resetBtn').classList.add('hidden');
-      document.getElementById('setupForm').classList.remove('hidden');
 
       updateDisplay();
     }
 
-    function formatTime(seconds) {
-      if (isNaN(seconds) || seconds < 0) seconds = 0;
-      var mins = Math.floor(seconds / 60);
-      var secs = seconds % 60;
-      return (mins < 10 ? "0" + mins : mins) + ":" + (secs < 10 ? "0" + secs : secs);
-    }
-
     function renderManagerList() {
-      var listEl = document.getElementById('exerciseList');
+      const listEl = document.getElementById('exerciseList');
       listEl.innerHTML = '';
-
-      exercises.forEach(function(ex, idx) {
-        var li = document.createElement('li');
+      exercises.forEach((ex, idx) => {
+        const li = document.createElement('li');
         li.className = 'ex-item';
-        li.innerHTML = 
-          '<div class="ex-info">' +
-            '<span class="ex-name">' + ex.name + '</span>' +
-            '<span class="ex-target">' + ex.muscle + '</span>' +
-          '</div>' +
-          '<div class="ex-actions">' +
-            '<button class="icon-btn" onclick="moveExercise(' + idx + ', -1)">▲</button>' +
-            '<button class="icon-btn" onclick="moveExercise(' + idx + ', 1)">▼</button>' +
-            '<button class="icon-btn delete" onclick="deleteExercise(' + ex.id + ')">✕</button>' +
-          '</div>';
+        li.innerHTML = `<span>${ex.name}</span><button class="icon-btn delete" onclick="deleteEx(${idx})">✕</button>`;
         listEl.appendChild(li);
       });
     }
 
-    function addExercise() {
-      var nameInput = document.getElementById('newExName');
-      var name = nameInput.value.trim();
-
-      if (!name) return;
-
-      var muscleSelect = document.getElementById('newExMuscle').value;
-      var artSelect = document.getElementById('newExArt').value;
-
-      exercises.push({
-        id: Date.now(),
-        name: name,
-        muscle: muscleSelect,
-        artKey: artSelect
-      });
-
-      nameInput.value = '';
-      saveExercises();
+    function deleteEx(idx) {
+      exercises.splice(idx, 1);
+      renderManagerList();
     }
 
-    function deleteExercise(id) {
-      exercises = exercises.filter(function(e) { return e.id !== id; });
-      saveExercises();
-    }
-
-    function moveExercise(index, direction) {
-      var newIndex = index + direction;
-      if (newIndex < 0 || newIndex >= exercises.length) return;
-
-      var temp = exercises[index];
-      exercises[index] = exercises[newIndex];
-      exercises[newIndex] = temp;
-
-      saveExercises();
-    }
-
-    // Initialize App
     resetWorkout();
   </script>
 </body>
