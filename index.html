@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Dumbbell Workout Timer - Dynamic Edition</title>
+  <title>Dumbbell Workout Timer - Animated Edition</title>
 
   <!-- iOS PWA Metadata -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -248,7 +248,7 @@
   <div id="timerView" class="view">
     <div class="diagram-container">
       <div class="anatomy-card">
-        <img id="exerciseArt" src="" alt="Exercise Frame" onerror="handleImageError(this)">
+        <img id="exerciseArt" src="" alt="Exercise Demonstration" onerror="handleImageError(this)">
       </div>
       <div id="phaseBadge" class="phase-badge phase-work">Ready</div>
       <div class="exercise-title" id="exerciseName">Loading...</div>
@@ -303,8 +303,6 @@
     let isRunning = false;
     let timeRemaining = 30;
     let timerInterval = null;
-    let animationInterval = null;
-    let isFrameOne = false;
 
     async function initApp() {
       try {
@@ -313,15 +311,15 @@
         
         const rawData = await response.json();
         
-        // Normalize dataset structure
+        // Map gif_url (animated files in /videos/) first, fallback to static image
         dataset = rawData.map(item => ({
           name: item.name || item.title || "Exercise",
-          image: item.image || (item.images && item.images[0]) || "",
-          images: item.images || [item.image]
-        })).filter(item => item.image);
+          animUrl: item.gif_url || item.image || "",
+          thumbUrl: item.image || ""
+        })).filter(item => item.animUrl);
 
-        // Load routine from localStorage or pick initial presets
-        const saved = localStorage.getItem('dynamic_timer_routine');
+        // Load saved routine or initialize defaults
+        const saved = localStorage.getItem('animated_timer_routine');
         if (saved) {
           exercises = JSON.parse(saved);
         } else if (dataset.length > 0) {
@@ -335,39 +333,24 @@
       }
     }
 
-    function getImageUrl(item, frameIdx) {
-      if (!item) return '';
-      let imgPath = item.images && item.images[frameIdx] ? item.images[frameIdx] : item.image;
-      if (imgPath.startsWith('http')) return imgPath;
-      return `${CDN_BASE}${imgPath}`;
+    function getImageUrl(item) {
+      if (!item || !item.animUrl) return '';
+      if (item.animUrl.startsWith('http')) return item.animUrl;
+      return `${CDN_BASE}${item.animUrl}`;
     }
 
     function handleImageError(imgEl) {
       imgEl.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='280' height='280' viewBox='0 0 280 280'><rect width='280' height='280' fill='%231c1c1e'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%238e8e93' font-family='sans-serif' font-size='14'>Image Unavailable</text></svg>";
     }
 
-    function startAnimation() {
-      stopAnimation();
-      animationInterval = setInterval(() => {
-        if (isRunning && isWorkPhase) {
-          isFrameOne = !isFrameOne;
-        } else {
-          isFrameOne = false;
-        }
-        updateArtDisplay();
-      }, 1000);
-    }
-
-    function stopAnimation() {
-      if (animationInterval) clearInterval(animationInterval);
-    }
-
     function updateArtDisplay() {
       const artImg = document.getElementById('exerciseArt');
       const currentEx = exercises[currentExerciseIndex] || dataset[0];
-      const frameIdx = isFrameOne ? 1 : 0;
       if (currentEx) {
-        artImg.src = getImageUrl(currentEx, frameIdx);
+        const targetUrl = getImageUrl(currentEx);
+        if (artImg.src !== targetUrl) {
+          artImg.src = targetUrl;
+        }
       }
     }
 
@@ -392,8 +375,8 @@
       exercises.push({
         id: Date.now(),
         name: ex.name,
-        image: ex.image,
-        images: ex.images
+        animUrl: ex.animUrl,
+        thumbUrl: ex.thumbUrl
       });
       document.getElementById('searchInput').value = '';
       document.getElementById('searchResults').innerHTML = '';
@@ -402,7 +385,7 @@
 
     function saveExercises() {
       try {
-        localStorage.setItem('dynamic_timer_routine', JSON.stringify(exercises));
+        localStorage.setItem('animated_timer_routine', JSON.stringify(exercises));
       } catch (e) {}
       renderManagerList();
       if (!isRunning) resetWorkout();
@@ -448,7 +431,6 @@
       }
 
       updateDisplay();
-      startAnimation();
 
       timerInterval = setInterval(() => {
         timeRemaining--;
@@ -465,7 +447,6 @@
       clearInterval(timerInterval);
       document.getElementById('startBtn').innerText = "Resume";
       document.getElementById('startBtn').className = "btn btn-start";
-      isFrameOne = false;
       updateDisplay();
     }
 
@@ -482,7 +463,6 @@
         timeRemaining = workSecs;
       }
 
-      isFrameOne = false;
       updateDisplay();
     }
 
@@ -510,10 +490,8 @@
 
     function resetWorkout() {
       clearInterval(timerInterval);
-      stopAnimation();
       isRunning = false;
       isWorkPhase = true;
-      isFrameOne = false;
       currentExerciseIndex = 0;
       timeRemaining = parseInt(document.getElementById('workTime').value) || 30;
 
