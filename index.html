@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Dumbbell Workout Timer - Repository Edition</title>
+  <title>Dumbbell Workout Timer</title>
 
   <!-- iOS PWA Metadata -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -248,15 +248,15 @@
   <div id="timerView" class="view">
     <div class="diagram-container">
       <div class="anatomy-card">
-        <img id="exerciseArt" src="" alt="Exercise Frame">
+        <img id="exerciseArt" src="" alt="Exercise Frame" onerror="handleImageError(this)">
       </div>
       <div id="phaseBadge" class="phase-badge phase-work">Ready</div>
-      <div class="exercise-title" id="exerciseName">Biceps Curl</div>
+      <div class="exercise-title" id="exerciseName">Bicep Curl</div>
     </div>
 
     <div class="timer-display">
       <div class="time-left" id="timer">00:30</div>
-      <div class="rounds-count" id="roundDisplay">Exercise 1 of 4</div>
+      <div class="rounds-count" id="roundDisplay">Exercise 1 of 3</div>
     </div>
 
     <div class="controls-card">
@@ -282,7 +282,7 @@
     <div class="manager-content">
       <h3>Search Dataset Exercises</h3>
       <br>
-      <input type="text" id="searchInput" class="search-box" placeholder="Type exercise name (e.g. Curl, Press, Row)..." oninput="filterDataset()">
+      <input type="text" id="searchInput" class="search-box" placeholder="Type exercise name..." oninput="filterDataset()">
       
       <div class="search-results" id="searchResults"></div>
 
@@ -292,31 +292,30 @@
   </div>
 
   <script>
-    // Relative local path matching your GitHub repository structure
-    const RAW_BASE = "./exercises/";
+    // Correct base URL pointing to master branch with matching exercise paths
+    const RAW_BASE = "https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/master/exercises/";
 
-    // Dataset matching folder names inside the exercises/ folder
+    // Correct exact folder names matching the repository structure
     const dataset = [
-      { name: "Biceps Curl", path: "Biceps_Curl" },
-      { name: "Barbell Bench Press", path: "Barbell_Bench_Press" },
-      { name: "Dumbbell Shoulder Press", path: "Dumbbell_Shoulder_Press" },
-      { name: "Tricep Dumbbell Extension", path: "Tricep_Dumbbell_Extension" },
-      { name: "Lat Pulldown", path: "Lat_Pulldown" },
-      { name: "Bent Over Row", path: "Bent_Over_Row" },
-      { name: "Bodyweight Squat", path: "Bodyweight_Squat" },
-      { name: "Dumbbell Lunge", path: "Dumbbell_Lunge" },
-      { name: "Push Up", path: "Push_Up" }
+      { name: "Bicep Curl", path: "bicep-curl" },
+      { name: "Barbell Bench Press", path: "barbell-bench-press" },
+      { name: "Dumbbell Shoulder Press", path: "dumbbell-shoulder-press" },
+      { name: "Triceps Dip", path: "triceps-dip" },
+      { name: "Lat Pulldown", path: "lat-pulldown" },
+      { name: "Bent Over Row", path: "bent-over-row" },
+      { name: "Bodyweight Squat", path: "bodyweight-squat" },
+      { name: "Dumbbell Lunge", path: "dumbbell-lunge" },
+      { name: "Push-Up", path: "push-up" }
     ];
 
     let exercises = [
-      { id: 1, name: "Biceps Curl", path: "Biceps_Curl" },
-      { id: 2, name: "Tricep Dumbbell Extension", path: "Tricep_Dumbbell_Extension" },
-      { id: 3, name: "Barbell Bench Press", path: "Barbell_Bench_Press" }
+      { id: 1, name: "Bicep Curl", path: "bicep-curl" },
+      { id: 2, name: "Dumbbell Shoulder Press", path: "dumbbell-shoulder-press" },
+      { id: 3, name: "Barbell Bench Press", path: "barbell-bench-press" }
     ];
 
-    // Load custom saved routine if present
     try {
-      const saved = localStorage.getItem('repo_dumbbell_timer_routine');
+      const saved = localStorage.getItem('cdn_dumbbell_timer_routine');
       if (saved) exercises = JSON.parse(saved);
     } catch (e) {}
 
@@ -330,6 +329,11 @@
 
     function getImageUrl(folderPath, frame) {
       return `${RAW_BASE}${folderPath}/images/${frame}.png`;
+    }
+
+    function handleImageError(imgEl) {
+      // Fallback placeholder image if network fails
+      imgEl.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='280' height='280' viewBox='0 0 280 280'><rect width='280' height='280' fill='%231c1c1e'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%238e8e93' font-family='sans-serif' font-size='14'>Image Unavailable</text></svg>";
     }
 
     function startAnimation() {
@@ -385,7 +389,7 @@
 
     function saveExercises() {
       try {
-        localStorage.setItem('repo_dumbbell_timer_routine', JSON.stringify(exercises));
+        localStorage.setItem('cdn_dumbbell_timer_routine', JSON.stringify(exercises));
       } catch (e) {}
       renderManagerList();
       if (!isRunning) resetWorkout();
@@ -539,7 +543,6 @@
       saveExercises();
     }
 
-    // Initialize App
     resetWorkout();
   </script>
 </body>
