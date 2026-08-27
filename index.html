@@ -63,8 +63,8 @@
     .anatomy-card {
       width: 100%;
       max-width: 340px;
-      height: 240px; /* Uniform height across all media views */
-      background-color: #ffffff; /* White background matching workout media assets */
+      height: 240px;
+      background-color: #ffffff; /* White canvas background matching assets */
       border: 1px solid var(--border-color);
       border-radius: 20px;
       display: flex;
@@ -78,7 +78,9 @@
     .anatomy-card img {
       width: 100%;
       height: 100%;
-      object-fit: contain; /* Retains aspect ratio without stretching */
+      object-fit: contain;
+      min-width: 0;   /* Prevents flexbox item blowout */
+      min-height: 0;  /* Prevents flexbox item blowout */
       border-radius: 12px;
     }
 
@@ -219,18 +221,17 @@
   </div>
 
   <script>
-    // Local exercise dataset referencing the uploaded assets
+    // Local dataset with URL-encoded space characters (%20) for filenames containing spaces
     const dataset = [
       { name: "Standing Bicep Curl with Supination", src: "good_23211301-Dumbbell-Standing-Inner-Biceps-Curl-version-2_Upper-Arms_360.gif" },
       { name: "Dumbbell Bent-Over Row", src: "good_02931301-Dumbbell-Bent-Over-Row_Back-FIX_360.jpg" },
       { name: "Dumbbell Chest Press", src: "Dumbbell-Chest-Press.jpg" },
-      { name: "Dumbbell Overhead Shoulder Press", src: "Overhead press.gif" },
+      { name: "Dumbbell Overhead Shoulder Press", src: "Overhead%20press.gif" },
       { name: "Lying Dumbbell Skull Crusher", src: "Dumbbell-Skull-Crusher.jpg" },
-      { name: "Dumbbell Glute Bridge", src: "Glute bridge.jpg" },
+      { name: "Dumbbell Glute Bridge", src: "Glute%20bridge.jpg" },
       { name: "Abdominal Crunch", src: "crunshes.gif" }
     ];
 
-    // Initialize active routine with all 7 exercises
     let exercises = [...dataset];
 
     let currentExerciseIndex = 0;
