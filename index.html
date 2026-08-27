@@ -2,540 +2,267 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Dumbbell Workout Timer - Animated Edition</title>
-
-  <!-- iOS PWA Metadata -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Dumbbell Timer">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dumbbell Workout Routine</title>
   <style>
     :root {
-      --bg-color: #000000;
-      --card-bg: #121212;
-      --card-inner: #1c1c1e;
-      --accent-work: #30d158;
-      --accent-rest: #0a84ff;
-      --text-color: #ffffff;
-      --subtext-color: #8e8e93;
-      --danger-color: #ff453a;
-      --border-color: #2c2c2e;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
+      --bg-color: #121212;
+      --card-bg: #1e1e1e;
+      --accent-color: #00adb5;
+      --text-color: #eeeeee;
+      --text-secondary: #b0b0b0;
+      --border-color: #333333;
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background-color: var(--bg-color);
       color: var(--text-color);
-      padding-top: env(safe-area-inset-top);
-      padding-bottom: env(safe-area-inset-bottom);
-      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 680px;
       display: flex;
       flex-direction: column;
+      gap: 24px;
     }
 
     header {
-      padding: 16px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background-color: var(--bg-color);
-      border-bottom: 0.5px solid var(--border-color);
+      text-align: center;
+      margin-bottom: 12px;
     }
 
     header h1 {
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
+      margin: 0 0 8px 0;
+      font-size: 1.8rem;
+      color: var(--text-color);
     }
 
-    .nav-btn {
-      background: none;
-      border: none;
-      color: var(--accent-rest);
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
+    header p {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
     }
 
-    .view {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      justify-content: space-between;
-    }
-
-    .diagram-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      flex: 1;
-    }
-
-    .anatomy-card {
-      width: 280px;
-      height: 280px;
+    /* Uniform Media Container Styling for Display & Editor */
+    .exercise-card {
       background-color: var(--card-bg);
+      border-radius: 12px;
       border: 1px solid var(--border-color);
-      border-radius: 28px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .media-frame {
+      width: 100%;
+      height: 240px; /* Enforces identical height across all cards and editor views */
+      background-color: #ffffff; /* White background matches FitnessProgramer asset canvas */
       display: flex;
       align-items: center;
       justify-content: center;
-      position: relative;
       overflow: hidden;
-      padding: 12px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      border-bottom: 1px solid var(--border-color);
     }
 
-    .anatomy-card img {
+    .media-frame img {
       width: 100%;
       height: 100%;
-      object-fit: contain;
-      border-radius: 16px;
+      object-fit: contain; /* Prevents distortion while keeping aspect ratio intact */
+    }
+
+    .exercise-body {
+      padding: 16px 20px 20px 20px;
     }
 
     .exercise-title {
-      font-size: 24px;
+      font-size: 1.25rem;
       font-weight: 700;
-      margin-top: 16px;
-      text-align: center;
-      letter-spacing: -0.5px;
+      margin: 0 0 6px 0;
+      color: var(--accent-color);
     }
 
-    .phase-badge {
-      display: inline-block;
-      padding: 4px 14px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 700;
+    .exercise-target {
+      font-size: 0.85rem;
       text-transform: uppercase;
-      margin-top: 10px;
       letter-spacing: 0.5px;
-    }
-
-    .phase-work { background-color: rgba(48, 209, 88, 0.15); color: var(--accent-work); border: 1px solid var(--accent-work); }
-    .phase-rest { background-color: rgba(10, 132, 255, 0.15); color: var(--accent-rest); border: 1px solid var(--accent-rest); }
-
-    .timer-display { text-align: center; margin: 8px 0; }
-
-    .time-left {
-      font-size: 76px;
-      font-weight: 800;
-      font-variant-numeric: tabular-nums;
-      line-height: 1;
-      letter-spacing: -2px;
-    }
-
-    .rounds-count {
-      font-size: 14px;
-      color: var(--subtext-color);
-      margin-top: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-    }
-
-    .controls-card {
-      background-color: var(--card-bg);
-      border-top: 1px solid var(--border-color);
-      border-top-left-radius: 32px;
-      border-top-right-radius: 32px;
-      padding: 20px 24px 32px;
-    }
-
-    .setting-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      color: var(--text-secondary);
       margin-bottom: 12px;
-    }
-
-    .setting-row label { font-size: 15px; color: var(--subtext-color); }
-
-    .setting-row input {
-      width: 70px;
-      background: var(--card-inner);
-      border: 1px solid var(--border-color);
-      color: #fff;
-      padding: 8px 10px;
-      border-radius: 10px;
-      font-size: 16px;
-      text-align: center;
-    }
-
-    .btn-group { display: flex; gap: 12px; margin-top: 10px; }
-
-    .btn {
-      flex: 1;
-      padding: 16px;
-      border: none;
-      border-radius: 16px;
-      font-size: 17px;
       font-weight: 600;
-      cursor: pointer;
     }
 
-    .btn-start { background-color: var(--accent-work); color: #000; }
-    .btn-pause { background-color: #ff9f0a; color: #000; }
-    .btn-reset { background-color: var(--card-inner); color: var(--danger-color); border: 1px solid var(--border-color); }
-
-    .manager-content { padding: 20px; flex: 1; overflow-y: auto; }
-
-    .search-box {
-      width: 100%;
-      background: var(--card-inner);
-      border: 1px solid var(--border-color);
-      color: #fff;
-      padding: 14px;
-      border-radius: 12px;
-      font-size: 16px;
-      margin-bottom: 12px;
+    .form-cues {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--text-color);
+      font-size: 0.95rem;
+      line-height: 1.5;
     }
 
-    .search-results {
-      max-height: 200px;
-      overflow-y: auto;
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      margin-bottom: 20px;
+    .form-cues li {
+      margin-bottom: 6px;
     }
 
-    .search-item {
-      padding: 12px 16px;
-      border-bottom: 0.5px solid var(--border-color);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-    }
-
-    .search-item:last-child { border-bottom: none; }
-    .search-item:hover { background-color: var(--card-inner); }
-
-    .ex-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
-
-    .ex-item {
+    /* Editor View Uniform Styling */
+    .editor-panel {
       background-color: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 14px;
-      padding: 12px 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      border-radius: 12px;
+      border: 2px dashed var(--accent-color);
+      padding: 20px;
     }
 
-    .icon-btn { background: none; border: none; color: var(--subtext-color); font-size: 18px; padding: 6px; cursor: pointer; }
-    .icon-btn.delete { color: var(--danger-color); }
-    .hidden { display: none !important; }
+    .editor-panel h2 {
+      margin-top: 0;
+      font-size: 1.2rem;
+      color: var(--accent-color);
+    }
+
+    .editor-preview-container {
+      margin-top: 12px;
+    }
+
+    .editor-preview-label {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
   </style>
 </head>
 <body>
 
+<div class="app-container">
   <header>
-    <h1 id="headerTitle">Dumbbell Timer</h1>
-    <button class="nav-btn" id="toggleViewBtn" onclick="toggleView()">Search Dataset</button>
+    <h1>Full-Body Dumbbell Routine</h1>
+    <p>7-Exercise Guided Plan with Form Animations</p>
   </header>
 
-  <div id="timerView" class="view">
-    <div class="diagram-container">
-      <div class="anatomy-card">
-        <img id="exerciseArt" src="" alt="Exercise Demonstration" onerror="handleImageError(this)">
-      </div>
-      <div id="phaseBadge" class="phase-badge phase-work">Ready</div>
-      <div class="exercise-title" id="exerciseName">Loading...</div>
+  <!-- Exercise 1: Biceps -->
+  <div class="exercise-card">
+    <div class="media-frame">
+      <img src="good_23211301-Dumbbell-Standing-Inner-Biceps-Curl-version-2_Upper-Arms_360.gif" alt="Standing Dumbbell Bicep Curl with Supination">
     </div>
-
-    <div class="timer-display">
-      <div class="time-left" id="timer">00:30</div>
-      <div class="rounds-count" id="roundDisplay">Exercise 1 of 1</div>
-    </div>
-
-    <div class="controls-card">
-      <div id="setupForm">
-        <div class="setting-row">
-          <label for="workTime">Work Duration (s)</label>
-          <input type="number" id="workTime" value="30" min="5">
-        </div>
-        <div class="setting-row">
-          <label for="restTime">Pause Duration (s)</label>
-          <input type="number" id="restTime" value="10" min="5">
-        </div>
-      </div>
-
-      <div class="btn-group">
-        <button class="btn btn-start" id="startBtn" onclick="toggleTimer()">Start</button>
-        <button class="btn btn-reset hidden" id="resetBtn" onclick="resetWorkout()">Reset</button>
-      </div>
+    <div class="exercise-body">
+      <div class="exercise-title">1. Standing Bicep Curl with Supination</div>
+      <div class="exercise-target">Target: Biceps Brachii & Forearms</div>
+      <ul class="form-cues">
+        <li>Stand upright holding dumbbells at your sides with palms facing each other.</li>
+        <li>Curl the weights upward while rotating your wrists so palms face up at the top contraction.</li>
+        <li>Keep elbows pinned close to your torso throughout the motion.</li>
+      </ul>
     </div>
   </div>
 
-  <div id="managerView" class="view hidden">
-    <div class="manager-content">
-      <h3>Search Dataset Exercises</h3>
-      <br>
-      <input type="text" id="searchInput" class="search-box" placeholder="Type exercise name..." oninput="filterDataset()">
-      
-      <div class="search-results" id="searchResults"></div>
-
-      <h3>Active Routine &amp; Order</h3>
-      <ul class="ex-list" id="exerciseList"></ul>
+  <!-- Exercise 2: Back -->
+  <div class="exercise-card">
+    <div class="media-frame">
+      <img src="good_02931301-Dumbbell-Bent-Over-Row_Back-FIX_360.jpg" alt="Dumbbell Bent-Over Row">
+    </div>
+    <div class="exercise-body">
+      <div class="exercise-title">2. Dumbbell Bent-Over Row</div>
+      <div class="exercise-target">Target: Latissimus Dorsi, Rhomboids & Rear Delts</div>
+      <ul class="form-cues">
+        <li>Hinge at your hips with a flat back and knees slightly bent.</li>
+        <li>Pull dumbbells straight up toward your lower ribcage, leading with your elbows.</li>
+        <li>Squeeze your shoulder blades together at the top of the pull.</li>
+      </ul>
     </div>
   </div>
 
-  <script>
-    const CDN_BASE = "https://cdn.jsdelivr.net/gh/hasaneyldrm/exercises-dataset@main/";
-    const JSON_URL = `${CDN_BASE}data/exercises.json`;
+  <!-- Exercise 3: Chest -->
+  <div class="exercise-card">
+    <div class="media-frame">
+      <img src="Dumbbell-Chest-Press.jpg" alt="Dumbbell Floor / Bench Press">
+    </div>
+    <div class="exercise-body">
+      <div class="exercise-title">3. Dumbbell Chest Press</div>
+      <div class="exercise-target">Target: Pectoralis Major, Front Delts & Triceps</div>
+      <ul class="form-cues">
+        <li>Lie flat on your back on the mat or bench with feet planted.</li>
+        <li>Hold dumbbells at chest height with elbows angled at roughly 45 degrees.</li>
+        <li>Press weights straight upward until arms are extended, contracting the chest.</li>
+      </ul>
+    </div>
+  </div>
 
-    let dataset = [];
-    let exercises = [];
+  <!-- Exercise 4: Shoulders -->
+  <div class="exercise-card">
+    <div class="media-frame">
+      <img src="Overhead press.gif" alt="Dumbbell Overhead Shoulder Press">
+    </div>
+    <div class="exercise-body">
+      <div class="exercise-title">4. Dumbbell Overhead Shoulder Press</div>
+      <div class="exercise-target">Target: Anterior & Lateral Deltoids</div>
+      <ul class="form-cues">
+        <li>Stand or sit with core braced and dumbbells positioned at shoulder height.</li>
+        <li>Press the weights vertically overhead without arching your lower back.</li>
+        <li>Lower back down under control until elbows reach 90 degrees.</li>
+      </ul>
+    </div>
+  </div>
 
-    let currentExerciseIndex = 0;
-    let isWorkPhase = true;
-    let isRunning = false;
-    let timeRemaining = 30;
-    let timerInterval = null;
+  <!-- Exercise 5: Triceps -->
+  <div class="exercise-card">
+    <div class="media-frame">
+      <img src="Dumbbell-Skull-Crusher.jpg" alt="Lying Dumbbell Skull Crusher">
+    </div>
+    <div class="exercise-body">
+      <div class="exercise-title">5. Lying Dumbbell Skull Crusher</div>
+      <div class="exercise-target">Target: Triceps Brachii</div>
+      <ul class="form-cues">
+        <li>Lie flat holding dumbbells straight up over your chest with palms facing inward.</li>
+        <li>Flex at the elbows to lower the weights down beside your ears while upper arms stay fixed.</li>
+        <li>Extend your elbows to press the weights back to starting position.</li>
+      </ul>
+    </div>
+  </div>
 
-    async function initApp() {
-      try {
-        const response = await fetch(JSON_URL);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        
-        const rawData = await response.json();
-        
-        // Map gif_url (animated files in /videos/) first, fallback to static image
-        dataset = rawData.map(item => ({
-          name: item.name || item.title || "Exercise",
-          animUrl: item.gif_url || item.image || "",
-          thumbUrl: item.image || ""
-        })).filter(item => item.animUrl);
+  <!-- Exercise 6: Glutes -->
+  <div class="exercise-card">
+    <div class="media-frame">
+      <img src="Glute bridge.jpg" alt="Dumbbell Glute Bridge / Hip Thrust">
+    </div>
+    <div class="exercise-body">
+      <div class="exercise-title">6. Dumbbell Glute Bridge</div>
+      <div class="exercise-target">Target: Gluteus Maximus & Hamstrings</div>
+      <ul class="form-cues">
+        <li>Lie on your back with knees bent and feet flat on the floor, holding a weight across hips.</li>
+        <li>Drive through your heels to extend your hips upward until shoulders, hips, and knees align.</li>
+        <li>Pause and squeeze glutes at the top before lowering slowly.</li>
+      </ul>
+    </div>
+  </div>
 
-        // Load saved routine or initialize defaults
-        const saved = localStorage.getItem('animated_timer_routine');
-        if (saved) {
-          exercises = JSON.parse(saved);
-        } else if (dataset.length > 0) {
-          exercises = dataset.slice(0, 3);
-        }
+  <!-- Exercise 7: Core -->
+  <div class="exercise-card">
+    <div class="media-frame">
+      <img src="crunshes.gif" alt="Abdominal Crunch">
+    </div>
+    <div class="exercise-body">
+      <div class="exercise-title">7. Abdominal Crunch</div>
+      <div class="exercise-target">Target: Rectus Abdominis</div>
+      <ul class="form-cues">
+        <li>Lie back with knees bent and feet flat on the floor.</li>
+        <li>Place hands gently behind head and lift shoulders off the floor using your abdominal muscles.</li>
+        <li>Lower back down smoothly without pulling on your neck.</li>
+      </ul>
+    </div>
+  </div>
 
-        resetWorkout();
-      } catch (err) {
-        console.error("Dataset fetch failed:", err);
-        document.getElementById('exerciseName').innerText = "Failed to load dataset";
-      }
-    }
+  <!-- Editor Section View Preview Component -->
+  <div class="editor-panel">
+    <h2>Editor Preview View</h2>
+    <div class="editor-preview-label">Active Selected Exercise Asset Frame (Matches Display Size)</div>
+    <div class="media-frame">
+      <img src="crunshes.gif" alt="Editor Preview Asset">
+    </div>
+  </div>
 
-    function getImageUrl(item) {
-      if (!item || !item.animUrl) return '';
-      if (item.animUrl.startsWith('http')) return item.animUrl;
-      return `${CDN_BASE}${item.animUrl}`;
-    }
+</div>
 
-    function handleImageError(imgEl) {
-      imgEl.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='280' height='280' viewBox='0 0 280 280'><rect width='280' height='280' fill='%231c1c1e'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%238e8e93' font-family='sans-serif' font-size='14'>Image Unavailable</text></svg>";
-    }
-
-    function updateArtDisplay() {
-      const artImg = document.getElementById('exerciseArt');
-      const currentEx = exercises[currentExerciseIndex] || dataset[0];
-      if (currentEx) {
-        const targetUrl = getImageUrl(currentEx);
-        if (artImg.src !== targetUrl) {
-          artImg.src = targetUrl;
-        }
-      }
-    }
-
-    function filterDataset() {
-      const query = document.getElementById('searchInput').value.toLowerCase().trim();
-      const resultsContainer = document.getElementById('searchResults');
-      resultsContainer.innerHTML = '';
-
-      if (!query) return;
-
-      const filtered = dataset.filter(ex => ex.name.toLowerCase().includes(query)).slice(0, 15);
-      filtered.forEach(ex => {
-        const item = document.createElement('div');
-        item.className = 'search-item';
-        item.innerHTML = `<span>${ex.name}</span><button class="nav-btn">+ Add</button>`;
-        item.onclick = () => addFromDataset(ex);
-        resultsContainer.appendChild(item);
-      });
-    }
-
-    function addFromDataset(ex) {
-      exercises.push({
-        id: Date.now(),
-        name: ex.name,
-        animUrl: ex.animUrl,
-        thumbUrl: ex.thumbUrl
-      });
-      document.getElementById('searchInput').value = '';
-      document.getElementById('searchResults').innerHTML = '';
-      saveExercises();
-    }
-
-    function saveExercises() {
-      try {
-        localStorage.setItem('animated_timer_routine', JSON.stringify(exercises));
-      } catch (e) {}
-      renderManagerList();
-      if (!isRunning) resetWorkout();
-    }
-
-    function toggleView() {
-      const timerView = document.getElementById('timerView');
-      const managerView = document.getElementById('managerView');
-      const toggleBtn = document.getElementById('toggleViewBtn');
-      const title = document.getElementById('headerTitle');
-
-      if (managerView.classList.contains('hidden')) {
-        pauseWorkout();
-        timerView.classList.add('hidden');
-        managerView.classList.remove('hidden');
-        toggleBtn.innerText = "Done";
-        title.innerText = "Edit Routine";
-        renderManagerList();
-      } else {
-        managerView.classList.add('hidden');
-        timerView.classList.remove('hidden');
-        toggleBtn.innerText = "Search Dataset";
-        title.innerText = "Dumbbell Timer";
-        resetWorkout();
-      }
-    }
-
-    function toggleTimer() {
-      if (exercises.length === 0) return alert("Please add an exercise first.");
-      if (!isRunning) startWorkout();
-      else pauseWorkout();
-    }
-
-    function startWorkout() {
-      isRunning = true;
-      document.getElementById('startBtn').innerText = "Pause";
-      document.getElementById('startBtn').className = "btn btn-pause";
-      document.getElementById('resetBtn').classList.remove('hidden');
-      document.getElementById('setupForm').classList.add('hidden');
-
-      if (timeRemaining === 0) {
-        timeRemaining = parseInt(document.getElementById('workTime').value) || 30;
-      }
-
-      updateDisplay();
-
-      timerInterval = setInterval(() => {
-        timeRemaining--;
-        if (timeRemaining < 0) {
-          switchPhase();
-        } else {
-          updateDisplay();
-        }
-      }, 1000);
-    }
-
-    function pauseWorkout() {
-      isRunning = false;
-      clearInterval(timerInterval);
-      document.getElementById('startBtn').innerText = "Resume";
-      document.getElementById('startBtn').className = "btn btn-start";
-      updateDisplay();
-    }
-
-    function switchPhase() {
-      const workSecs = parseInt(document.getElementById('workTime').value) || 30;
-      const restSecs = parseInt(document.getElementById('restTime').value) || 10;
-
-      if (isWorkPhase) {
-        isWorkPhase = false;
-        timeRemaining = restSecs;
-      } else {
-        isWorkPhase = true;
-        currentExerciseIndex = (currentExerciseIndex + 1) % exercises.length;
-        timeRemaining = workSecs;
-      }
-
-      updateDisplay();
-    }
-
-    function updateDisplay() {
-      if (exercises.length === 0) return;
-      const currentEx = exercises[currentExerciseIndex] || dataset[0];
-      const mins = String(Math.floor(timeRemaining / 60)).padStart(2, '0');
-      const secs = String(timeRemaining % 60).padStart(2, '0');
-      
-      document.getElementById('timer').innerText = `${mins}:${secs}`;
-      document.getElementById('roundDisplay').innerText = `Exercise ${currentExerciseIndex + 1} of ${exercises.length}`;
-
-      const phaseBadge = document.getElementById('phaseBadge');
-      if (isWorkPhase) {
-        phaseBadge.className = "phase-badge phase-work";
-        phaseBadge.innerText = "Work";
-        document.getElementById('exerciseName').innerText = currentEx ? currentEx.name : "";
-      } else {
-        phaseBadge.className = "phase-badge phase-rest";
-        phaseBadge.innerText = "Rest";
-        document.getElementById('exerciseName').innerText = "Rest Phase";
-      }
-      updateArtDisplay();
-    }
-
-    function resetWorkout() {
-      clearInterval(timerInterval);
-      isRunning = false;
-      isWorkPhase = true;
-      currentExerciseIndex = 0;
-      timeRemaining = parseInt(document.getElementById('workTime').value) || 30;
-
-      document.getElementById('startBtn').innerText = "Start";
-      document.getElementById('startBtn').className = "btn btn-start";
-      document.getElementById('resetBtn').classList.add('hidden');
-      document.getElementById('setupForm').classList.remove('hidden');
-
-      updateDisplay();
-    }
-
-    function renderManagerList() {
-      const listEl = document.getElementById('exerciseList');
-      listEl.innerHTML = '';
-      exercises.forEach((ex, idx) => {
-        const li = document.createElement('li');
-        li.className = 'ex-item';
-        li.innerHTML = `
-          <span>${ex.name}</span>
-          <div class="ex-actions">
-            <button class="icon-btn" onclick="moveExercise(${idx}, -1)">▲</button>
-            <button class="icon-btn" onclick="moveExercise(${idx}, 1)">▼</button>
-            <button class="icon-btn delete" onclick="deleteEx(${idx})">✕</button>
-          </div>
-        `;
-        listEl.appendChild(li);
-      });
-    }
-
-    function deleteEx(idx) {
-      exercises.splice(idx, 1);
-      saveExercises();
-    }
-
-    function moveExercise(index, direction) {
-      const newIndex = index + direction;
-      if (newIndex < 0 || newIndex >= exercises.length) return;
-      const temp = exercises[index];
-      exercises[index] = exercises[newIndex];
-      exercises[newIndex] = temp;
-      saveExercises();
-    }
-
-    document.addEventListener('DOMContentLoaded', initApp);
-  </script>
 </body>
 </html>
