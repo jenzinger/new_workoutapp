@@ -300,9 +300,9 @@
       { name: "Standing Bicep Curl with Supination", src: "./GIFs/Dumbbell-Standing-Inner-Biceps-Curl.gif" },
       { name: "Dumbbell Bent-Over Row", src: "./GIFs/Dumbbell-Bent-Over-Row.gif" },
       { name: "Dumbbell Chest Press", src: "./GIFs/Dumbbell-Chest-Press.gif" },
-      { name: "Dumbbell Overhead Shoulder Press", src: "./GIFs/Overhead press.gif" },
+      { name: "Dumbbell Overhead Shoulder Press", src: "./GIFs/Overhead-Press.gif" },
       { name: "Lying Dumbbell Skull Crusher", src: "./GIFs/Dumbbell-Skull-Crusher.gif" },
-      { name: "Dumbbell Glute Bridge", src: "./GIFs/Glute bridge.gif" },
+      { name: "Dumbbell Glute Bridge", src: "./GIFs/Glute-Bridge.gif" },
       { name: "Abdominal Crunch", src: "./GIFs/Crunshes.gif" }
     ];
 
@@ -330,13 +330,8 @@
       const artImg = document.getElementById('exerciseArt');
       const currentEx = exercises[currentExerciseIndex] || dataset[0];
       
-      if (currentEx && artImg.src !== window.location.origin + currentEx.src.replace('.', '')) {
-        artImg.onerror = function() {
-          // Fallback case-sensitivity check for Glute bridge filename variants
-          if (currentEx.name.includes("Glute Bridge")) {
-            this.src = "./GIFs/Glute-Bridge.gif";
-          }
-        };
+      if (currentEx && artImg.getAttribute('data-src') !== currentEx.src) {
+        artImg.setAttribute('data-src', currentEx.src);
         artImg.src = currentEx.src;
         artImg.alt = currentEx.name;
       }
