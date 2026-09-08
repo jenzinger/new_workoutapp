@@ -129,6 +129,41 @@
 
     .manager-content { padding: 20px; flex: 1; overflow-y: auto; }
 
+    .settings-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 20px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .setting-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .setting-group label {
+      font-size: 12px;
+      color: var(--subtext-color);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .setting-group input {
+      background: var(--card-inner);
+      border: 1px solid var(--border-color);
+      color: #fff;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      text-align: center;
+    }
+
     .search-box {
       width: 100%;
       background: var(--card-inner);
@@ -141,7 +176,7 @@
     }
 
     .search-results {
-      max-height: 220px;
+      max-height: 200px;
       overflow-y: auto;
       background: var(--card-bg);
       border: 1px solid var(--border-color);
@@ -205,7 +240,7 @@
 
   <header>
     <h1 id="headerTitle">Workout Timer</h1>
-    <button class="nav-btn" id="toggleViewBtn" onclick="toggleView()">Search Dataset</button>
+    <button class="nav-btn" id="toggleViewBtn" onclick="toggleView()">Settings & Dataset</button>
   </header>
 
   <div id="timerView" class="view">
@@ -219,7 +254,7 @@
 
     <div class="timer-display">
       <div class="time-left" id="timer">00:30</div>
-      <div class="rounds-count" id="roundDisplay">Exercise 1 of 7</div>
+      <div class="rounds-count" id="roundDisplay">Exercise 1 of 7 • Cycle 1 of 1</div>
     </div>
 
     <div class="controls-card">
@@ -232,9 +267,26 @@
 
   <div id="managerView" class="view hidden">
     <div class="manager-content">
+      <h3>Timer Settings</h3>
+      <br>
+      <div class="settings-panel">
+        <div class="setting-group">
+          <label for="workInput">Work (s)</label>
+          <input type="number" id="workInput" value="30" min="5" onchange="updateSettings()">
+        </div>
+        <div class="setting-group">
+          <label for="restInput">Rest (s)</label>
+          <input type="number" id="restInput" value="10" min="0" onchange="updateSettings()">
+        </div>
+        <div class="setting-group">
+          <label for="cyclesInput">Cycles</label>
+          <input type="number" id="cyclesInput" value="1" min="1" onchange="updateSettings()">
+        </div>
+      </div>
+
       <h3>Search Dataset Exercises</h3>
       <br>
-      <input type="text" id="searchInput" class="search-box" placeholder="Type exercise name (e.g. Curl, Press, Row)..." oninput="filterDataset()">
+      <input type="text" id="searchInput" class="search-box" placeholder="Type exercise name..." oninput="filterDataset()">
       
       <div class="search-results" id="searchResults"></div>
 
@@ -257,25 +309,35 @@
     let exercises = [...dataset];
 
     let currentExerciseIndex = 0;
+    let currentCycle = 1;
+    let totalCycles = 1;
+    let workDuration = 30;
+    let restDuration = 10;
+
     let isWorkPhase = true;
     let isRunning = false;
-    let timeRemaining = 30;
+    let timeRemaining = workDuration;
     let timerInterval = null;
+
+    function updateSettings() {
+      workDuration = parseInt(document.getElementById('workInput').value) || 30;
+      restDuration = parseInt(document.getElementById('restInput').value) || 10;
+      totalCycles = parseInt(document.getElementById('cyclesInput').value) || 1;
+      resetWorkout();
+    }
 
     function updateArtDisplay() {
       const artImg = document.getElementById('exerciseArt');
       const currentEx = exercises[currentExerciseIndex] || dataset[0];
       
-      if (currentEx) {
+      if (currentEx && artImg.src !== window.location.origin + currentEx.src.replace('.', '')) {
         artImg.onerror = function() {
-          if (!this.dataset.retry) {
-            this.dataset.retry = "true";
-            this.src = encodeURI(currentEx.src) + '?t=' + Date.now();
+          // Fallback case-sensitivity check for Glute bridge filename variants
+          if (currentEx.name.includes("Glute Bridge")) {
+            this.src = "./GIFs/Glute-Bridge.gif";
           }
         };
-        artImg.dataset.retry = "";
-        // Adding a timestamp parameter forces animated GIFs to restart playing upon transition
-        artImg.src = currentEx.src + '?t=' + Date.now();
+        artImg.src = currentEx.src;
         artImg.alt = currentEx.name;
       }
     }
@@ -323,7 +385,7 @@
       } else {
         managerView.classList.add('hidden');
         timerView.classList.remove('hidden');
-        toggleBtn.innerText = "Search Dataset";
+        toggleBtn.innerText = "Settings & Dataset";
         resetWorkout();
       }
     }
@@ -357,14 +419,33 @@
 
     function switchPhase() {
       if (isWorkPhase) {
-        isWorkPhase = false;
-        timeRemaining = 10;
+        if (restDuration > 0) {
+          isWorkPhase = false;
+          timeRemaining = restDuration;
+        } else {
+          advanceExercise();
+        }
       } else {
         isWorkPhase = true;
-        currentExerciseIndex = (currentExerciseIndex + 1) % exercises.length;
-        timeRemaining = 30;
+        advanceExercise();
       }
       updateDisplay();
+    }
+
+    function advanceExercise() {
+      if (currentExerciseIndex + 1 < exercises.length) {
+        currentExerciseIndex++;
+        timeRemaining = workDuration;
+      } else {
+        if (currentCycle < totalCycles) {
+          currentCycle++;
+          currentExerciseIndex = 0;
+          timeRemaining = workDuration;
+        } else {
+          alert("Workout Completed!");
+          resetWorkout();
+        }
+      }
     }
 
     function updateDisplay() {
@@ -373,7 +454,7 @@
       const secs = String(timeRemaining % 60).padStart(2, '0');
       
       document.getElementById('timer').innerText = `${mins}:${secs}`;
-      document.getElementById('roundDisplay').innerText = `Exercise ${exercises.length > 0 ? currentExerciseIndex + 1 : 0} of ${exercises.length}`;
+      document.getElementById('roundDisplay').innerText = `Exercise ${exercises.length > 0 ? currentExerciseIndex + 1 : 0} of ${exercises.length} • Cycle ${currentCycle} of ${totalCycles}`;
 
       const phaseBadge = document.getElementById('phaseBadge');
       if (isWorkPhase) {
@@ -393,7 +474,8 @@
       isRunning = false;
       isWorkPhase = true;
       currentExerciseIndex = 0;
-      timeRemaining = 30;
+      currentCycle = 1;
+      timeRemaining = workDuration;
 
       document.getElementById('startBtn').innerText = "Start";
       document.getElementById('startBtn').className = "btn btn-start";
