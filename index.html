@@ -246,10 +246,10 @@
   <div id="timerView" class="view">
     <div class="diagram-container">
       <div class="anatomy-card">
-        <img id="exerciseArt" src="" alt="Exercise Animation">
+        <img id="exerciseArt" src="" alt="Exercise Animation" onerror="tryFallbackImg(this)">
       </div>
       <div id="phaseBadge" class="phase-badge phase-work">Ready</div>
-      <div class="exercise-title" id="exerciseName">Standing Bicep Curl</div>
+      <div class="exercise-title" id="exerciseName">Standing Inner Biceps Curl</div>
     </div>
 
     <div class="timer-display">
@@ -297,13 +297,13 @@
 
   <script>
     const dataset = [
-      { name: "Standing Bicep Curl with Supination", src: "./GIFs/Standing-Inner-Biceps-Curl.gif" },
-      { name: "Dumbbell Bent-Over Row", src: "./GIFs/Bent-Over-Row.gif" },
-      { name: "Dumbbell Chest Press", src: "./GIFs/Chest-Press.gif" },
-      { name: "Dumbbell Overhead Shoulder Press", src: "./GIFs/Overhead-Press.gif" },
-      { name: "Lying Dumbbell Skull Crusher", src: "./GIFs/Skull-Crusher.gif" },
-      { name: "Dumbbell Glute Bridge", src: "./GIFs/Glute-Bridge.gif" },
-      { name: "Abdominal Crunch", src: "./GIFs/Crunshes.gif" }
+      { name: "Standing Inner Biceps Curl", src: "./GIFs/Standing-Inner-Biceps-Curl.gif" },
+      { name: "Bent-Over Row", src: "./GIFs/Bent-Over-Row.gif" },
+      { name: "Chest Press", src: "./GIFs/Chest-Press.gif" },
+      { name: "Overhead Press", src: "./GIFs/Overhead-Press.gif" },
+      { name: "Skull Crusher", src: "./GIFs/Skull-Crusher.gif" },
+      { name: "Glute Bridge", src: "./GIFs/Glute-Bridge.gif" },
+      { name: "Crunches", src: "./GIFs/Crunshes.gif" }
     ];
 
     let exercises = [...dataset];
@@ -319,6 +319,19 @@
     let timeRemaining = workDuration;
     let timerInterval = null;
 
+    function tryFallbackImg(img) {
+      if (!img.dataset.failedSteps) {
+        img.dataset.failedSteps = "1";
+        img.src = "./GIFs/Glute-bridge.gif";
+      } else if (img.dataset.failedSteps === "1") {
+        img.dataset.failedSteps = "2";
+        img.src = "./GIFs/Glute-Bridge.GIF";
+      } else if (img.dataset.failedSteps === "2") {
+        img.dataset.failedSteps = "3";
+        img.src = "./GIFs/glute-bridge.gif";
+      }
+    }
+
     function updateSettings() {
       workDuration = parseInt(document.getElementById('workInput').value) || 30;
       restDuration = parseInt(document.getElementById('restInput').value) || 10;
@@ -331,6 +344,7 @@
       const currentEx = exercises[currentExerciseIndex] || dataset[0];
       
       if (currentEx && artImg.getAttribute('data-src') !== currentEx.src) {
+        delete artImg.dataset.failedSteps;
         artImg.setAttribute('data-src', currentEx.src);
         artImg.src = currentEx.src;
         artImg.alt = currentEx.name;
@@ -349,7 +363,7 @@
         const item = document.createElement('div');
         item.className = 'search-item';
         item.innerHTML = `
-          <img class="ex-thumb" src="${ex.src}" alt="${ex.name}">
+          <img class="ex-thumb" src="${ex.src}" alt="${ex.name}" onerror="tryFallbackImg(this)">
           <span style="flex:1;">${ex.name}</span>
           <button class="nav-btn">+ Add</button>
         `;
@@ -486,7 +500,7 @@
         const li = document.createElement('li');
         li.className = 'ex-item';
         li.innerHTML = `
-          <img class="ex-thumb" src="${ex.src}" alt="${ex.name}">
+          <img class="ex-thumb" src="${ex.src}" alt="${ex.name}" onerror="tryFallbackImg(this)">
           <div class="ex-info">${ex.name}</div>
           <div class="ex-actions">
             <button class="icon-btn" onclick="moveEx(${idx}, -1)">▲</button>
