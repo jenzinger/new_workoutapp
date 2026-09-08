@@ -141,7 +141,7 @@
     }
 
     .search-results {
-      max-height: 180px;
+      max-height: 220px;
       overflow-y: auto;
       background: var(--card-bg);
       border: 1px solid var(--border-color);
@@ -150,11 +150,11 @@
     }
 
     .search-item {
-      padding: 12px 16px;
+      padding: 10px 16px;
       border-bottom: 0.5px solid var(--border-color);
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      gap: 12px;
       cursor: pointer;
     }
 
@@ -167,13 +167,36 @@
       background-color: var(--card-bg);
       border: 1px solid var(--border-color);
       border-radius: 14px;
-      padding: 12px 16px;
+      padding: 10px 14px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      gap: 12px;
     }
 
-    .icon-btn { background: none; border: none; color: var(--subtext-color); font-size: 18px; padding: 6px; cursor: pointer; }
+    .ex-thumb {
+      width: 48px;
+      height: 48px;
+      background-color: #ffffff;
+      border-radius: 8px;
+      object-fit: contain;
+      flex-shrink: 0;
+      padding: 2px;
+    }
+
+    .ex-info {
+      flex: 1;
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .ex-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .icon-btn { background: none; border: none; color: var(--subtext-color); font-size: 16px; padding: 6px; cursor: pointer; }
+    .icon-btn:hover { color: var(--text-color); }
     .icon-btn.delete { color: var(--danger-color); }
     .hidden { display: none !important; }
   </style>
@@ -221,7 +244,6 @@
   </div>
 
   <script>
-    // Dataset updated with your new GIF filenames inside the GIFs folder
     const dataset = [
       { name: "Standing Bicep Curl with Supination", src: "./GIFs/Dumbbell-Standing-Inner-Biceps-Curl.gif" },
       { name: "Dumbbell Bent-Over Row", src: "./GIFs/Dumbbell-Bent-Over-Row.gif" },
@@ -248,11 +270,12 @@
         artImg.onerror = function() {
           if (!this.dataset.retry) {
             this.dataset.retry = "true";
-            this.src = encodeURI(currentEx.src);
+            this.src = encodeURI(currentEx.src) + '?t=' + Date.now();
           }
         };
         artImg.dataset.retry = "";
-        artImg.src = currentEx.src;
+        // Adding a timestamp parameter forces animated GIFs to restart playing upon transition
+        artImg.src = currentEx.src + '?t=' + Date.now();
         artImg.alt = currentEx.name;
       }
     }
@@ -268,7 +291,11 @@
       filtered.forEach(ex => {
         const item = document.createElement('div');
         item.className = 'search-item';
-        item.innerHTML = `<span>${ex.name}</span><button class="nav-btn">+ Add</button>`;
+        item.innerHTML = `
+          <img class="ex-thumb" src="${ex.src}" alt="${ex.name}">
+          <span style="flex:1;">${ex.name}</span>
+          <button class="nav-btn">+ Add</button>
+        `;
         item.onclick = () => addFromDataset(ex);
         resultsContainer.appendChild(item);
       });
@@ -381,9 +408,27 @@
       exercises.forEach((ex, idx) => {
         const li = document.createElement('li');
         li.className = 'ex-item';
-        li.innerHTML = `<span>${ex.name}</span><button class="icon-btn delete" onclick="deleteEx(${idx})">✕</button>`;
+        li.innerHTML = `
+          <img class="ex-thumb" src="${ex.src}" alt="${ex.name}">
+          <div class="ex-info">${ex.name}</div>
+          <div class="ex-actions">
+            <button class="icon-btn" onclick="moveEx(${idx}, -1)">▲</button>
+            <button class="icon-btn" onclick="moveEx(${idx}, 1)">▼</button>
+            <button class="icon-btn delete" onclick="deleteEx(${idx})">✕</button>
+          </div>
+        `;
         listEl.appendChild(li);
       });
+    }
+
+    function moveEx(idx, direction) {
+      const targetIdx = idx + direction;
+      if (targetIdx < 0 || targetIdx >= exercises.length) return;
+      const temp = exercises[idx];
+      exercises[idx] = exercises[targetIdx];
+      exercises[targetIdx] = temp;
+      renderManagerList();
+      updateDisplay();
     }
 
     function deleteEx(idx) {
