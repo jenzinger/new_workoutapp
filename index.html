@@ -82,6 +82,7 @@
       object-fit: contain;
       border-radius: 12px;
       display: block;
+      image-rendering: -webkit-optimize-contrast;
     }
 
     .exercise-title { font-size: 24px; font-weight: 700; margin-top: 16px; text-align: center; }
@@ -246,7 +247,7 @@
   <div id="timerView" class="view">
     <div class="diagram-container">
       <div class="anatomy-card">
-        <img id="exerciseArt" src="" alt="Exercise Animation" onerror="tryFallbackImg(this)">
+        <img id="exerciseArt" src="" alt="Exercise Animation" onerror="handleImageError(this)">
       </div>
       <div id="phaseBadge" class="phase-badge phase-work">Ready</div>
       <div class="exercise-title" id="exerciseName">Standing Inner Biceps Curl</div>
@@ -319,16 +320,11 @@
     let timeRemaining = workDuration;
     let timerInterval = null;
 
-    function tryFallbackImg(img) {
-      if (!img.dataset.failedSteps) {
-        img.dataset.failedSteps = "1";
-        img.src = "./GIFs/Glute-bridge.gif";
-      } else if (img.dataset.failedSteps === "1") {
-        img.dataset.failedSteps = "2";
-        img.src = "./GIFs/Glute-Bridge.GIF";
-      } else if (img.dataset.failedSteps === "2") {
-        img.dataset.failedSteps = "3";
-        img.src = "./GIFs/glute-bridge.gif";
+    function handleImageError(img) {
+      if (!img.dataset.tryCount) {
+        img.dataset.tryCount = "1";
+        // Force timestamp reload to clear memory locks on large files
+        img.src = img.getAttribute('data-src') + '?t=' + new Date().getTime();
       }
     }
 
@@ -344,7 +340,7 @@
       const currentEx = exercises[currentExerciseIndex] || dataset[0];
       
       if (currentEx && artImg.getAttribute('data-src') !== currentEx.src) {
-        delete artImg.dataset.failedSteps;
+        delete artImg.dataset.tryCount;
         artImg.setAttribute('data-src', currentEx.src);
         artImg.src = currentEx.src;
         artImg.alt = currentEx.name;
@@ -363,7 +359,7 @@
         const item = document.createElement('div');
         item.className = 'search-item';
         item.innerHTML = `
-          <img class="ex-thumb" src="${ex.src}" alt="${ex.name}" onerror="tryFallbackImg(this)">
+          <img class="ex-thumb" src="${ex.src}" alt="${ex.name}" onerror="handleImageError(this)">
           <span style="flex:1;">${ex.name}</span>
           <button class="nav-btn">+ Add</button>
         `;
@@ -500,7 +496,7 @@
         const li = document.createElement('li');
         li.className = 'ex-item';
         li.innerHTML = `
-          <img class="ex-thumb" src="${ex.src}" alt="${ex.name}" onerror="tryFallbackImg(this)">
+          <img class="ex-thumb" src="${ex.src}" alt="${ex.name}" onerror="handleImageError(this)">
           <div class="ex-info">${ex.name}</div>
           <div class="ex-actions">
             <button class="icon-btn" onclick="moveEx(${idx}, -1)">▲</button>
