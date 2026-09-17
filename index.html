@@ -12,8 +12,8 @@
 
   <style>
     :root {
-      /* Matching background color to the logo's dark gray tone (#1a1a1a) */
-      --bg-color: #1a1a1a;
+      /* Reverted background color back to True Black */
+      --bg-color: #000000;
       --card-bg: #121212;
       --card-inner: #1c1c1e;
       --accent-work: #30d158;
@@ -60,13 +60,14 @@
       padding: 4px 16px 12px;
     }
 
-    /* Logo Image Container with blend filter for seamless integration */
+    /* Logo Image Container - Filters added to force true black / blend pure darks */
     .app-logo-img {
       width: 160px;
       height: auto;
       object-fit: contain;
       margin-bottom: 8px;
-      mix-blend-mode: lighten;
+      filter: contrast(130%) brightness(95%);
+      mix-blend-mode: screen;
     }
 
     /* Title Split Into One Word Per Line */
