@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Jens' Muscle Maker</title>
 
-  <!-- Google Fonts for Ultra-Fancy Display & Sleek UI -->
+  <!-- Google Font for Previous Fancy Title (Teko) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Montserrat:wght@800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Teko:wght@700&display=swap" rel="stylesheet">
 
   <style>
     :root {
@@ -21,8 +21,6 @@
       --subtext-color: #8e8e93;
       --danger-color: #ff453a;
       --border-color: #2c2c2e;
-      --gold-primary: #ffd700;
-      --gold-dark: #b8860b;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -61,47 +59,31 @@
       padding: 4px 16px 12px;
     }
 
-    /* Logo Styling */
-    .app-logo {
-      width: 52px;
-      height: 52px;
-      background: linear-gradient(135deg, #2c2c2e 0%, #121212 100%);
-      border: 1px solid rgba(255, 215, 0, 0.4);
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+    /* Logo Image Container */
+    .app-logo-img {
+      width: 140px;
+      height: auto;
+      object-fit: contain;
       margin-bottom: 8px;
     }
 
-    .app-logo svg {
-      width: 30px;
-      height: 30px;
-      fill: url(#goldGradient);
-    }
-
-    /* Fancy Gold Typography */
+    /* Previous Teko Fancy Title (One Word Per Line) */
     .fancy-title {
-      font-family: 'Cinzel Decorative', serif;
-      font-size: 26px;
-      font-weight: 900;
+      font-family: 'Teko', sans-serif;
+      font-size: 42px;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 2px;
+      line-height: 0.85;
       text-align: center;
-      line-height: 1.15;
-      background: linear-gradient(180deg, #FFFFFF 0%, #FFD700 45%, #B8860B 100%);
+      background: linear-gradient(180deg, #ffffff 0%, #a1a1a6 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0px 2px 8px rgba(255, 215, 0, 0.25));
+      filter: drop-shadow(0px 4px 12px rgba(255, 255, 255, 0.15));
     }
 
-    .title-accent-line {
-      width: 60px;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
-      margin-top: 6px;
-      border-radius: 2px;
+    .fancy-title span {
+      display: block;
     }
 
     .view { display: flex; flex-direction: column; flex: 1; justify-content: space-between; }
@@ -116,8 +98,7 @@
     }
 
     .phase-indicator {
-      font-family: 'Montserrat', sans-serif;
-      font-size: 38px;
+      font-size: 40px;
       font-weight: 900;
       text-transform: uppercase;
       letter-spacing: 2px;
@@ -300,27 +281,20 @@
 </head>
 <body>
 
-  <!-- Global SVG Gradients -->
-  <svg style="width:0;height:0;position:absolute;" aria-hidden="true" focusable="false">
-    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#FFFFFF" />
-      <stop offset="45%" stop-color="#FFD700" />
-      <stop offset="100%" stop-color="#B8860B" />
-    </linearGradient>
-  </svg>
-
   <header>
     <button class="nav-btn" id="toggleViewBtn" onclick="toggleView()">Settings & Dataset</button>
   </header>
 
   <div class="brand-header-container">
-    <div class="app-logo">
-      <svg viewBox="0 0 24 24">
-        <path d="M20.57 14.86L22 13.43L20.57 12L22 10.57L20.57 9.14L19.14 10.57L17.71 9.14L16.29 10.57L17.71 12L16.29 13.43L17.71 14.86L19.14 13.43L20.57 14.86ZM3.43 14.86L4.86 13.43L3.43 12L4.86 10.57L3.43 9.14L2 10.57L0.57 9.14L2 10.57L0.57 12L2 13.43L0.57 14.86L2 13.43L3.43 14.86ZM6.29 13H17.71V11H6.29V13Z" />
-      </svg>
-    </div>
-    <h1 class="fancy-title">Jens' Muscle Maker</h1>
-    <div class="title-accent-line"></div>
+    <!-- Muscle Fiber Logo Image -->
+    <img src="./muscle-logo.png" alt="Muscle Logo" class="app-logo-img">
+    
+    <!-- Previous Teko Font Title Split Into One Word Per Line -->
+    <h1 class="fancy-title">
+      <span>JENS'</span>
+      <span>MUSCLE</span>
+      <span>MAKER</span>
+    </h1>
   </div>
 
   <div id="timerView" class="view">
@@ -588,7 +562,7 @@
 
       document.getElementById('startBtn').innerText = "Start";
       document.getElementById('startBtn').className = "btn btn-start";
-      document.getElementById('resetBtn').classList.add('hidden');
+      document.getElementById('resetBtn').classList.remove('hidden');
 
       updateDisplay();
     }
