@@ -359,7 +359,6 @@
     let workDuration = 30;
     let restDuration = 10;
 
-    // Phases: 'PREP', 'WORK', 'REST'
     let currentPhase = 'PREP'; 
     let isRunning = false;
     let soundEnabled = true;
@@ -367,7 +366,6 @@
     let timerInterval = null;
     let activeMediaSrc = "";
 
-    // Web Audio Synthesizer
     let audioCtx = null;
 
     function initAudio() {
@@ -405,17 +403,19 @@
       } catch(e) {}
     }
 
+    /* Option 1: Modern Digital Chimes */
     function soundWorkStart() {
-      playTone(880, 'sine', 0.25); // High Start Tone
+      playTone(523.25, 'sine', 0.15); // C5
+      setTimeout(() => playTone(659.25, 'sine', 0.25), 100); // E5
     }
 
     function soundRestStart() {
-      playTone(440, 'sine', 0.15); // Double Rest Tone
-      setTimeout(() => playTone(330, 'sine', 0.25), 150);
+      playTone(392.00, 'sine', 0.12); // G4
+      setTimeout(() => playTone(329.63, 'sine', 0.20), 120); // E4
     }
 
     function soundCountdown() {
-      playTone(600, 'sine', 0.08); // Short Tick
+      playTone(800, 'triangle', 0.04); // Soft woodblock tick
     }
 
     function updateSettings() {
@@ -426,9 +426,19 @@
       resetWorkout();
     }
 
+    function getUpcomingExerciseIndex() {
+      if (currentPhase === 'PREP') {
+        return 0;
+      } else if (currentPhase === 'REST') {
+        return (currentExerciseIndex + 1 < exercises.length) ? currentExerciseIndex + 1 : 0;
+      }
+      return currentExerciseIndex;
+    }
+
     function updateArtDisplay() {
       const container = document.getElementById('mediaContainer');
-      const targetEx = exercises[currentExerciseIndex] || dataset[0];
+      const targetIndex = (currentPhase === 'WORK') ? currentExerciseIndex : getUpcomingExerciseIndex();
+      const targetEx = exercises[targetIndex] || dataset[0];
 
       if (!targetEx) {
         container.innerHTML = `<div style="color: #8e8e93; font-weight: 600;">Workout Complete</div>`;
@@ -452,7 +462,8 @@
         }
       }
 
-      document.getElementById('exerciseName').innerText = targetEx.name;
+      const prefix = (currentPhase !== 'WORK') ? "Up Next: " : "";
+      document.getElementById('exerciseName').innerText = prefix + targetEx.name;
     }
 
     function filterDataset() {
@@ -522,10 +533,12 @@
 
       timerInterval = setInterval(() => {
         timeRemaining--;
-        if (timeRemaining <= 3 && timeRemaining > 0) {
+
+        if (timeRemaining > 0 && timeRemaining <= 3) {
           soundCountdown();
         }
-        if (timeRemaining < 0) {
+
+        if (timeRemaining === 0) {
           switchPhase();
         } else {
           updateDisplay();
@@ -603,7 +616,8 @@
       } else {
         phaseIndicator.className = "phase-indicator rest";
         phaseIndicator.innerText = "REST!";
-        roundDisplay.innerText = `Rest Phase • Next: Exercise ${currentExerciseIndex + 2 <= exercises.length ? currentExerciseIndex + 2 : 1}`;
+        const nextExNum = (currentExerciseIndex + 2 <= exercises.length) ? currentExerciseIndex + 2 : 1;
+        roundDisplay.innerText = `Rest Phase • Next: Exercise ${nextExNum}`;
       }
 
       updateArtDisplay();
