@@ -400,7 +400,6 @@
       document.getElementById('audioToggleBtn').innerText = soundEnabled ? "🔊 Sound On" : "🔇 Muted";
     }
 
-    // Advanced Sound Synthesizer Engine
     function playChimeNote(freq, type = 'sine', startTime = 0, duration = 0.2, volume = 0.15, endFreq = null) {
       if (!soundEnabled) return;
       initAudio();
@@ -426,39 +425,65 @@
       } catch(e) {}
     }
 
-    /* Modern & Exciting START Sound (High-energy multi-layered arpeggio chime) */
     function soundWorkStart() {
-      // Step 1: D5
       playChimeNote(587.33, 'triangle', 0.00, 0.18, 0.18);
       playChimeNote(587.33, 'sine', 0.00, 0.18, 0.12);
 
-      // Step 2: F#5
       playChimeNote(739.99, 'triangle', 0.08, 0.18, 0.18);
       playChimeNote(739.99, 'sine', 0.08, 0.18, 0.12);
 
-      // Step 3: A5
       playChimeNote(880.00, 'triangle', 0.16, 0.22, 0.20);
       playChimeNote(880.00, 'sine', 0.16, 0.22, 0.15);
 
-      // Final Octave Flare: D6 with slight pitch glide up
       playChimeNote(1174.66, 'sine', 0.24, 0.40, 0.25, 1244.51);
-      playChimeNote(587.33, 'triangle', 0.24, 0.35, 0.10); // Warm bass support
+      playChimeNote(587.33, 'triangle', 0.24, 0.35, 0.10);
     }
 
-    /* Modern REST/STOP Sound (Downward dual-tone resolution) */
     function soundRestStart() {
-      // Warm downward glide (A4 -> F#4)
       playChimeNote(440.00, 'triangle', 0.00, 0.20, 0.18, 369.99);
       playChimeNote(440.00, 'sine', 0.00, 0.20, 0.12);
 
-      // Soft grounding note (D4)
       playChimeNote(293.66, 'sine', 0.12, 0.35, 0.22);
       playChimeNote(587.33, 'triangle', 0.12, 0.25, 0.08);
     }
 
-    /* Crisp Countdown Woodblock Tick */
     function soundCountdown() {
       playChimeNote(900, 'triangle', 0, 0.035, 0.12);
+    }
+
+    /* Persistence Management via localStorage */
+    function saveAppState() {
+      const state = {
+        prepDuration,
+        workDuration,
+        restDuration,
+        totalCycles,
+        exercises
+      };
+      localStorage.setItem('jens_muscle_maker_settings', JSON.stringify(state));
+    }
+
+    function loadAppState() {
+      const saved = localStorage.getItem('jens_muscle_maker_settings');
+      if (saved) {
+        try {
+          const state = JSON.parse(saved);
+          if (state.prepDuration !== undefined) prepDuration = state.prepDuration;
+          if (state.workDuration !== undefined) workDuration = state.workDuration;
+          if (state.restDuration !== undefined) restDuration = state.restDuration;
+          if (state.totalCycles !== undefined) totalCycles = state.totalCycles;
+          if (Array.isArray(state.exercises) && state.exercises.length > 0) {
+            exercises = state.exercises;
+          }
+        } catch(e) {
+          console.error("Failed to parse saved settings:", e);
+        }
+      }
+
+      document.getElementById('prepInput').value = prepDuration;
+      document.getElementById('workInput').value = workDuration;
+      document.getElementById('restInput').value = restDuration;
+      document.getElementById('cyclesInput').value = totalCycles;
     }
 
     function updateSettings() {
@@ -466,6 +491,7 @@
       workDuration = parseInt(document.getElementById('workInput').value) || 30;
       restDuration = parseInt(document.getElementById('restInput').value) || 10;
       totalCycles = parseInt(document.getElementById('cyclesInput').value) || 1;
+      saveAppState();
       resetWorkout();
     }
 
@@ -538,6 +564,7 @@
       exercises.push(ex);
       document.getElementById('searchInput').value = '';
       document.getElementById('searchResults').innerHTML = '';
+      saveAppState();
       renderManagerList();
       updateDisplay();
     }
@@ -711,6 +738,7 @@
       const temp = exercises[idx];
       exercises[idx] = exercises[targetIdx];
       exercises[targetIdx] = temp;
+      saveAppState();
       renderManagerList();
       resetWorkout();
     }
@@ -720,10 +748,13 @@
       if (currentExerciseIndex >= exercises.length) {
         currentExerciseIndex = Math.max(0, exercises.length - 1);
       }
+      saveAppState();
       renderManagerList();
       resetWorkout();
     }
 
+    // Initialize application state
+    loadAppState();
     resetWorkout();
   </script>
 </body>
