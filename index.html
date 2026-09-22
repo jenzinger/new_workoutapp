@@ -5,19 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Jens' Muscle Maker</title>
 
-  <!-- Google Font for Fancy Title (Teko) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Teko:wght@700&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      /* Matching dark tone #121212 across all elements */
       --bg-color: #121212;
       --card-bg: #121212;
       --card-inner: #1c1c1e;
       --accent-work: #30d158;
       --accent-rest: #0a84ff;
+      --accent-prep: #ff9f0a;
       --text-color: #ffffff;
       --subtext-color: #8e8e93;
       --danger-color: #ff453a;
@@ -38,7 +37,7 @@
     header {
       padding: 12px 20px;
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
       align-items: center;
       background-color: var(--bg-color);
     }
@@ -61,7 +60,6 @@
       background-color: var(--bg-color);
     }
 
-    /* Logo Image Container matching #121212 */
     .app-logo-img {
       width: 160px;
       height: auto;
@@ -71,7 +69,6 @@
       mix-blend-mode: lighten;
     }
 
-    /* Title Split Into One Word Per Line */
     .fancy-title {
       font-family: 'Teko', sans-serif;
       font-size: 42px;
@@ -86,9 +83,7 @@
       filter: drop-shadow(0px 4px 12px rgba(255, 255, 255, 0.15));
     }
 
-    .fancy-title span {
-      display: block;
-    }
+    .fancy-title span { display: block; }
 
     .view { display: flex; flex-direction: column; flex: 1; justify-content: space-between; }
 
@@ -112,6 +107,7 @@
 
     .phase-indicator.work { color: var(--accent-work); }
     .phase-indicator.rest { color: var(--accent-rest); }
+    .phase-indicator.prep { color: var(--accent-prep); }
 
     .anatomy-card {
       width: 100%;
@@ -192,11 +188,7 @@
       gap: 12px;
     }
 
-    .setting-row label {
-      font-size: 14px;
-      color: var(--text-color);
-      font-weight: 600;
-    }
+    .setting-row label { font-size: 14px; color: var(--text-color); font-weight: 600; }
 
     .setting-row input {
       width: 90px;
@@ -265,17 +257,8 @@
       padding: 2px;
     }
 
-    .ex-info {
-      flex: 1;
-      font-size: 15px;
-      font-weight: 500;
-    }
-
-    .ex-actions {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
+    .ex-info { flex: 1; font-size: 15px; font-weight: 500; }
+    .ex-actions { display: flex; align-items: center; gap: 4px; }
 
     .icon-btn { background: none; border: none; color: var(--subtext-color); font-size: 16px; padding: 6px; cursor: pointer; }
     .icon-btn:hover { color: var(--text-color); }
@@ -286,6 +269,7 @@
 <body>
 
   <header>
+    <button class="nav-btn" id="audioToggleBtn" onclick="toggleAudio()">🔊 Sound On</button>
     <button class="nav-btn" id="toggleViewBtn" onclick="toggleView()">Settings & Dataset</button>
   </header>
 
@@ -301,7 +285,7 @@
 
   <div id="timerView" class="view">
     <div class="diagram-container">
-      <div id="phaseIndicator" class="phase-indicator work">GO!</div>
+      <div id="phaseIndicator" class="phase-indicator prep">GET READY!</div>
       
       <div class="anatomy-card" id="mediaContainer">
         <img id="exerciseArt" src="" alt="Exercise Animation">
@@ -311,8 +295,8 @@
     </div>
 
     <div class="timer-display">
-      <div class="time-left" id="timer">00:30</div>
-      <div class="rounds-count" id="roundDisplay">Exercise 1 of 7 • Cycle 1 of 1</div>
+      <div class="time-left" id="timer">00:10</div>
+      <div class="rounds-count" id="roundDisplay">Get Ready • Cycle 1 of 1</div>
     </div>
 
     <div class="controls-card">
@@ -327,6 +311,10 @@
     <div class="manager-content">
       <h3>Timer Settings</h3>
       <div class="settings-panel">
+        <div class="setting-row">
+          <label for="prepInput">Prep Rest Duration (s)</label>
+          <input type="number" id="prepInput" value="10" min="0" onchange="updateSettings()">
+        </div>
         <div class="setting-row">
           <label for="workInput">Work Duration (s)</label>
           <input type="number" id="workInput" value="30" min="5" onchange="updateSettings()">
@@ -367,36 +355,80 @@
     let currentExerciseIndex = 0;
     let currentCycle = 1;
     let totalCycles = 1;
+    let prepDuration = 10;
     let workDuration = 30;
     let restDuration = 10;
 
-    let isWorkPhase = true;
+    // Phases: 'PREP', 'WORK', 'REST'
+    let currentPhase = 'PREP'; 
     let isRunning = false;
-    let timeRemaining = workDuration;
+    let soundEnabled = true;
+    let timeRemaining = prepDuration;
     let timerInterval = null;
     let activeMediaSrc = "";
 
+    // Web Audio Synthesizer
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function toggleAudio() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('audioToggleBtn').innerText = soundEnabled ? "🔊 Sound On" : "🔇 Muted";
+    }
+
+    function playTone(freq = 440, type = 'sine', duration = 0.15) {
+      if (!soundEnabled) return;
+      initAudio();
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch(e) {}
+    }
+
+    function soundWorkStart() {
+      playTone(880, 'sine', 0.25); // High Start Tone
+    }
+
+    function soundRestStart() {
+      playTone(440, 'sine', 0.15); // Double Rest Tone
+      setTimeout(() => playTone(330, 'sine', 0.25), 150);
+    }
+
+    function soundCountdown() {
+      playTone(600, 'sine', 0.08); // Short Tick
+    }
+
     function updateSettings() {
+      prepDuration = parseInt(document.getElementById('prepInput').value) || 0;
       workDuration = parseInt(document.getElementById('workInput').value) || 30;
       restDuration = parseInt(document.getElementById('restInput').value) || 10;
       totalCycles = parseInt(document.getElementById('cyclesInput').value) || 1;
       resetWorkout();
     }
 
-    function getNextExercise() {
-      if (currentExerciseIndex + 1 < exercises.length) {
-        return exercises[currentExerciseIndex + 1];
-      } else if (currentCycle < totalCycles) {
-        return exercises[0];
-      }
-      return null;
-    }
-
     function updateArtDisplay() {
       const container = document.getElementById('mediaContainer');
-      const targetEx = isWorkPhase 
-        ? (exercises[currentExerciseIndex] || dataset[0]) 
-        : getNextExercise();
+      const targetEx = exercises[currentExerciseIndex] || dataset[0];
 
       if (!targetEx) {
         container.innerHTML = `<div style="color: #8e8e93; font-weight: 600;">Workout Complete</div>`;
@@ -477,6 +509,7 @@
 
     function toggleTimer() {
       if (exercises.length === 0) return alert("Please add an exercise first.");
+      initAudio();
       if (!isRunning) startWorkout();
       else pauseWorkout();
     }
@@ -489,8 +522,14 @@
 
       timerInterval = setInterval(() => {
         timeRemaining--;
-        if (timeRemaining < 0) switchPhase();
-        else updateDisplay();
+        if (timeRemaining <= 3 && timeRemaining > 0) {
+          soundCountdown();
+        }
+        if (timeRemaining < 0) {
+          switchPhase();
+        } else {
+          updateDisplay();
+        }
       }, 1000);
     }
 
@@ -504,29 +543,39 @@
 
     function switchPhase() {
       activeMediaSrc = "";
-      if (isWorkPhase) {
+      
+      if (currentPhase === 'PREP') {
+        currentPhase = 'WORK';
+        timeRemaining = workDuration;
+        soundWorkStart();
+      } else if (currentPhase === 'WORK') {
         if (restDuration > 0) {
-          isWorkPhase = false;
+          currentPhase = 'REST';
           timeRemaining = restDuration;
+          soundRestStart();
         } else {
           advanceExercise();
         }
-      } else {
-        isWorkPhase = true;
+      } else if (currentPhase === 'REST') {
         advanceExercise();
       }
+
       updateDisplay();
     }
 
     function advanceExercise() {
       if (currentExerciseIndex + 1 < exercises.length) {
         currentExerciseIndex++;
+        currentPhase = 'WORK';
         timeRemaining = workDuration;
+        soundWorkStart();
       } else {
         if (currentCycle < totalCycles) {
           currentCycle++;
           currentExerciseIndex = 0;
+          currentPhase = 'WORK';
           timeRemaining = workDuration;
+          soundWorkStart();
         } else {
           alert("Workout Completed!");
           resetWorkout();
@@ -539,15 +588,22 @@
       const secs = String(timeRemaining % 60).padStart(2, '0');
       
       document.getElementById('timer').innerText = `${mins}:${secs}`;
-      document.getElementById('roundDisplay').innerText = `Exercise ${exercises.length > 0 ? currentExerciseIndex + 1 : 0} of ${exercises.length} • Cycle ${currentCycle} of ${totalCycles}`;
 
       const phaseIndicator = document.getElementById('phaseIndicator');
-      if (isWorkPhase) {
+      const roundDisplay = document.getElementById('roundDisplay');
+
+      if (currentPhase === 'PREP') {
+        phaseIndicator.className = "phase-indicator prep";
+        phaseIndicator.innerText = "GET READY!";
+        roundDisplay.innerText = `Get Ready • Cycle ${currentCycle} of ${totalCycles}`;
+      } else if (currentPhase === 'WORK') {
         phaseIndicator.className = "phase-indicator work";
         phaseIndicator.innerText = "GO!";
+        roundDisplay.innerText = `Exercise ${currentExerciseIndex + 1} of ${exercises.length} • Cycle ${currentCycle} of ${totalCycles}`;
       } else {
         phaseIndicator.className = "phase-indicator rest";
         phaseIndicator.innerText = "REST!";
+        roundDisplay.innerText = `Rest Phase • Next: Exercise ${currentExerciseIndex + 2 <= exercises.length ? currentExerciseIndex + 2 : 1}`;
       }
 
       updateArtDisplay();
@@ -556,10 +612,10 @@
     function resetWorkout() {
       clearInterval(timerInterval);
       isRunning = false;
-      isWorkPhase = true;
       currentExerciseIndex = 0;
       currentCycle = 1;
-      timeRemaining = workDuration;
+      currentPhase = prepDuration > 0 ? 'PREP' : 'WORK';
+      timeRemaining = currentPhase === 'PREP' ? prepDuration : workDuration;
       activeMediaSrc = "";
 
       document.getElementById('startBtn').innerText = "Start";
