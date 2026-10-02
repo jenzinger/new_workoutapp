@@ -369,6 +369,30 @@
     let timerInterval = null;
     let activeMediaSrc = "";
 
+    /* Screen Wake Lock API Controller */
+    let wakeLock = null;
+
+    async function requestWakeLock() {
+      if ('wakeLock' in navigator && !wakeLock) {
+        try {
+          wakeLock = await navigator.wakeLock.request('screen');
+        } catch (err) {
+          console.log(`Wake Lock Error: ${err.name}, ${err.message}`);
+        }
+      }
+    }
+
+    async function releaseWakeLock() {
+      if (wakeLock) {
+        try {
+          await wakeLock.release();
+          wakeLock = null;
+        } catch (err) {
+          console.log(`Wake Lock Release Error: ${err.name}, ${err.message}`);
+        }
+      }
+    }
+
     /* Unified iOS WebKit Audio Engine */
     let audioCtx = null;
 
@@ -384,7 +408,6 @@
     function unlockAudioForiOS() {
       initAudio();
       if (audioCtx) {
-        // Unlock WebKit audio pipeline on Chrome/Safari for iOS
         const buffer = audioCtx.createBuffer(1, 1, 22050);
         const source = audioCtx.createBufferSource();
         source.buffer = buffer;
@@ -417,7 +440,6 @@
           osc.frequency.exponentialRampToValueAtTime(Math.max(20, endFreq), now + duration);
         }
 
-        // iOS Chrome/WebKit requires explicitly non-zero starting values for gain ramps
         gain.gain.setValueAtTime(0.001, now);
         gain.gain.linearRampToValueAtTime(volume, now + 0.01);
         gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
@@ -448,7 +470,7 @@
       playChimeNote(880, 'triangle', 0, 0.05, 0.30);
     }
 
-    /* iOS WebKit Hardened Persistent State Storage */
+    /* Persistent State Storage */
     function saveAppState() {
       const state = {
         prepDuration,
@@ -458,7 +480,7 @@
         exercises
       };
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       } catch(e) {
         console.error("Failed to save state to localStorage:", e);
       }
@@ -466,7 +488,7 @@
 
     function loadAppState() {
       try {
-        const saved = localStorage.getItem(STORAGE_KEY);
+        const saved = window.localStorage.getItem(STORAGE_KEY);
         if (saved) {
           const state = JSON.parse(saved);
           if (state.prepDuration !== undefined) prepDuration = Number(state.prepDuration);
@@ -487,11 +509,27 @@
       document.getElementById('cyclesInput').value = totalCycles;
     }
 
-    // Explicitly flush state to disk before iOS suspends Chrome background process
+    // Explicitly flush state to disk and manage wake lock state on tab visibility change
     window.addEventListener('pagehide', saveAppState);
     window.addEventListener('beforeunload', saveAppState);
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'hidden') saveAppState();
+    document.addEventListener('visibilitychange', async () => {
+      if (document.visibilityState === 'hidden') {
+        saveAppState();
+      } else if (document.visibilityState === 'visible' && isRunning) {
+        await requestWakeLock();
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const inputs = ['prepInput', 'workInput', 'restInput', 'cyclesInput'];
+      inputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.addEventListener('change', updateSettings);
+          el.addEventListener('keyup', updateSettings);
+          el.addEventListener('blur', updateSettings);
+        }
+      });
     });
 
     function updateSettings() {
@@ -603,8 +641,9 @@
       else pauseWorkout();
     }
 
-    function startWorkout() {
+    async function startWorkout() {
       isRunning = true;
+      await requestWakeLock(); // Prevent screen dimming while running
       document.getElementById('startBtn').innerText = "Pause";
       document.getElementById('startBtn').className = "btn btn-pause";
       document.getElementById('resetBtn').classList.remove('hidden');
@@ -624,8 +663,9 @@
       }, 1000);
     }
 
-    function pauseWorkout() {
+    async function pauseWorkout() {
       isRunning = false;
+      await releaseWakeLock(); // Allow screen to dim when paused
       clearInterval(timerInterval);
       document.getElementById('startBtn').innerText = "Resume";
       document.getElementById('startBtn').className = "btn btn-start";
@@ -701,9 +741,10 @@
       updateArtDisplay();
     }
 
-    function resetWorkout() {
+    async function resetWorkout() {
       clearInterval(timerInterval);
       isRunning = false;
+      await releaseWakeLock(); // Release lock when reset or workout finished
       currentExerciseIndex = 0;
       currentCycle = 1;
       currentPhase = prepDuration > 0 ? 'PREP' : 'WORK';
